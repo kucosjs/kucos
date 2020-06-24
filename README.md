@@ -1,5 +1,7 @@
 <h1 style="text-align:center;">Introducing Kucos <a href="https://kucos.js.org"><img style="vertical-align:middle;" src="https://kucos.js.org/assets/img/kucos.gif" /></a></h1>
 
+<img src="https://i.imgur.com/yPt3ONT.gif" style="width: 600px;display: block; margin: 0 auto;" alt="Screenshot of Kucos">
+
 Simple and privacy focused comments with kudos.
 
 You don't need a server to host your comment system, you can easily host Kucos on <s>ZEIT NOW</s> (now [Vercel](https://vercel.com/)) and database on Mongo Atlas where 500mb is for free (for comments it is a lot space :)).
@@ -48,4 +50,4 @@ Now all you have to do is _npm install_, run the command _gulp_ and _node index.
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+The MIT License (MIT). Please see [License File](LICENSE) for more information.
