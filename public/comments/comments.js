@@ -60,12 +60,17 @@ class Comments {
     
         let kucosServerUrl = "http://localhost:3000";
         const data = await fetch(kucosServerUrl + '/api/comments', { 
-            credentials: "include",
-            //mode: 'cors',
+            // FIX: changed application/json to application/x-www-form-urlencoded for sending cookies to the server
+            // I have no idea why, but application/json doesn't send cookies with POST.
+            headers: { 
+                'Accept': 'application/x-www-form-urlencoded', 
+                'Content-Type': 'application/x-www-form-urlencoded' 
+            },
+            credentials: 'include',
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify( {article_url: article_url, comment: comment, author: author, email: email, website: website, parent_id: parent_id} )
-        })
+            body: 'article_url=' + encodeURIComponent(article_url) + '&comment=' + encodeURIComponent(comment) + '&author=' + encodeURIComponent(author)
+             + '&email=' + encodeURIComponent(email) + '&website=' + encodeURIComponent(website) + '&parent_id=' + encodeURIComponent(parent_id)
+        });
     
         var infos = await data.json();
     
@@ -86,10 +91,15 @@ class Comments {
     
         let kucosServerUrl = "http://localhost:3000";
         const data = await fetch(kucosServerUrl + '/api/comments/vote', { 
-            credentials: "include",
+            // FIX: changed application/json to application/x-www-form-urlencoded for sending cookies to the server
+            // I have no idea why, but application/json doesn't send cookies with POST.
+            headers: { 
+                'Accept': 'application/x-www-form-urlencoded', 
+                'Content-Type': 'application/x-www-form-urlencoded' 
+            },
+            credentials: 'include',
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ msgid: msgid, userid: userid, action: action })
+            body: 'msgid=' + encodeURIComponent(msgid) + '&userid=' + encodeURIComponent(userid) + '&action=' + encodeURIComponent(action)
         })
     
         let infos = await data.json();

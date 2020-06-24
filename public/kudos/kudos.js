@@ -81,9 +81,14 @@ class Kudoable {
 
     let article_url = encodeURIComponent(url);
     let kucosServerUrl = "http://localhost:3000";
-    let res = await fetch(kucosServerUrl + '/api/kudos/' + article_url);
+
+    let res = await fetch(kucosServerUrl + '/api/kudos/' + article_url, { 
+        credentials: "include"
+    });
+
     let data = await res.json();
     return this.setCount(data.message.kudos);
+
   };
 
   request = async (action) => {
@@ -92,13 +97,21 @@ class Kudoable {
     if (action == "remove" ) localStorage.removeItem('kudo:' + url);
     
     let kucosServerUrl = "http://localhost:3000";
-    let req = await fetch(kucosServerUrl + '/api/kudos', { 
+    let req = await fetch(kucosServerUrl + '/api/kudos', {
+        // FIX: changed application/json to application/x-www-form-urlencoded for sending cookies to the server
+        // I have no idea why, but application/json doesn't send cookies with POST.
+        headers: { 
+            'Accept': 'application/x-www-form-urlencoded', 
+            'Content-Type': 'application/x-www-form-urlencoded' 
+        },
+        credentials: 'include',
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify( {id: url, kudo: action} )
-    })
+        body: 'id=' + encodeURIComponent(url) + '&kudo=' + encodeURIComponent(action)
+    });
+
     var data = await req.json();
     return this.setCount(data.message.kudos);
+
   };
 
   kudosForm = () => {
