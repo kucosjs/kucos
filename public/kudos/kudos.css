@@ -1,0 +1,214 @@
+p.count {
+  display: block;
+}
+div.opening {
+  background-color: #fff;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin: 0 auto;
+  border: 5px solid #000;
+  position: relative;
+}
+div.opening div.circle {
+  background-color: #000;
+  width: 50px;
+  height: 50px;
+  margin-left: -25px;
+  margin-top: -25px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transition-property: transform, background-color;
+  transition-duration: 1s;
+  transition-timing-function: ease-out;
+  transform: scale(0.3);
+  transition-style: preserve-3d;
+  -webkit-transition-property: -webkit-transform, background-color;
+  -webkit-transition-duration: 1s;
+  -webkit-transition-timing-function: ease-out;
+  -webkit-transform: scale(0.3);
+  -webkit-transform-style: preserve-3d;
+  -moz-transition-property: -moz-transform, color;
+  -moz-transition-duration: 1s;
+  -moz-transition-timing-function: ease-out;
+  -moz-transform: scale(0.3);
+  -moz-transform-style: preserve-3d;
+  backface-visibility: visible;
+  -webkit-backface-visibility: visible;
+  -moz-backface-visibility: visible;
+}
+
+figure.kudo {
+  display: block;
+  position: relative;
+  text-align: center;
+  width: 100px;
+  left: auto;
+  top: auto;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.kudo.complete a.kudobject div.opening div.circle {
+  background-image: url(/kudos/heart_60x60.png);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #000;
+  background-size: 80%;
+  -moz-background-size: 80%;
+}
+
+a.count {
+  text-decoration: none;
+}
+a.count span {
+  width: auto;
+  text-transform: uppercase;
+  margin-top: 5px;
+  color: #000;
+  font-weight: 800;
+  line-height: 13px;
+  margin-top: 5px;
+}
+
+a.count span.txt {
+  font-size: 70%;
+}
+a.kudobject {
+  display: block;
+  cursor: pointer;
+  color: #ffffff;
+}
+
+a.kudobject:hover {
+  color: #ffffff;
+}
+
+.kudo .dontmove {
+  display: none;
+  font-size: 70%;
+}
+
+.kudo.active .dontmove {
+  display: inline;
+}
+
+.kudo .num,
+.txt {
+  display: inline;
+}
+
+.kudo.active .num {
+  display: none;
+}
+
+.kudo.active .txt {
+  display: none;
+}
+
+.kudo.active a.kudobject div.opening div.circle {
+  transform: scale(1.1);
+  -webkit-transform: scale(1.1);
+  -moz-transform: scale(1.1);
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.kudo.complete a.kudobject div.opening div.circle {
+  transition-property: none;
+  animation: bounce 1s;
+  animation-iteration-count: 1;
+  transform: scale(0.85);
+  -webkit-transition-property: none;
+  -webkit-animation: bounce 1s;
+  -webkit-animation-iteration-count: 1;
+  -webkit-transform: scale(0.85);
+  -moz-transition-property: none;
+  -moz-animation: bounce 1s;
+  -moz-animation-iteration-count: 1;
+  -moz-transform: scale(0.85);
+}
+
+.kudobject .icon {
+  position: absolute;
+  font-size: 50px;
+  padding-top: 10px;
+  margin-left: -45px;
+}
+
+.complete .kudobject .icon {
+  position: absolute;
+  font-size: 47px;
+  padding-top: 14px;
+  margin-left: -49px;
+}
+
+@keyframes bounce {
+  0% {
+    transform: scale(1.1);
+    background-color: #000;
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.6);
+    opacity: 0.7;
+    background-color: #000;
+  }
+  60% {
+    transform: scale(0.6);
+    opacity: 1;
+  }
+  80% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(0.85);
+  }
+}
+@-webkit-keyframes bounce {
+  0% {
+    -webkit-transform: scale(1.1);
+    background-color: #000;
+    opacity: 1;
+  }
+  50% {
+    -webkit-transform: scale(1.6);
+    opacity: 0.7;
+    background-color: #000;
+  }
+  60% {
+    -webkit-transform: scale(0.6);
+    opacity: 1;
+  }
+  80% {
+    -webkit-transform: scale(0.95);
+  }
+  100% {
+    -webkit-transform: scale(0.85);
+  }
+}
+@-moz-keyframes bounce {
+  0% {
+    -moz-transform: scale(1.1);
+    background-color: #000;
+    opacity: 1;
+  }
+  50% {
+    -moz-transform: scale(1.6);
+    opacity: 0.7;
+    background-color: #000;
+  }
+  60% {
+    -moz-transform: scale(0.6);
+    opacity: 1;
+  }
+  80% {
+    -moz-transform: scale(0.95);
+  }
+  100% {
+    -moz-transform: scale(0.85);
+  }
+}

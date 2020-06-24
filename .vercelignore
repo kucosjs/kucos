@@ -1,0 +1,10 @@
+node_modules
+.DS_Store
+public/website
+config.example.js
+.prettierignore
+gulpfile.js
+.babelrc
+package-lock.json
+.eslintrs.js
+test.js

@@ -1,0 +1,62 @@
+{
+  "name": "kucos",
+  "version": "0.10.2",
+  "description": "Open source comments and kudos server for static websites",
+  "private": true,
+  "scripts": {
+    "dev": "node index.js",
+    "start": "NODE_ENV=production node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skorotkiewicz/kucos.git"
+  },
+  "keywords": [
+    "opensource",
+    "comments",
+    "kudos",
+    "mongodb",
+    "mongoose",
+    "privacy",
+    "kucos"
+  ],
+  "author": "Sebastian Korotkiewicz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/skorotkiewicz/kucos/issues"
+  },
+  "homepage": "https://github.com/skorotkiewicz/kucos#readme",
+  "dependencies": {
+    "async": "^3.1.0",
+    "axios": "^0.19.2",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "debug": "latest",
+    "express": "^4.17.1",
+    "moment": "^2.27.0",
+    "mongoose": "latest",
+    "morgan": "^1.9.1",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.10.3",
+    "@babel/plugin-proposal-class-properties": "^7.10.1",
+    "@babel/preset-env": "^7.10.3",
+    "eslint": "^7.3.1",
+    "forever": "^1.0.0",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-clean": "^0.4.0",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-cleanhtml": "^1.0.3",
+    "gulp-concat": "^2.6.1",
+    "gulp-eslint": "^6.0.0",
+    "gulp-html-minifier": "^0.1.8",
+    "gulp-minify-css": "^1.2.4",
+    "gulp-rename": "^2.0.0",
+    "gulp-string-replace": "^1.1.2",
+    "gulp-strip-debug": "^3.0.0",
+    "gulp-uglify": "^3.0.2",
+    "gulp-uglify-es": "^2.0.0"
+  }
+}

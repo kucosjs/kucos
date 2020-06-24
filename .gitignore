@@ -1,0 +1,9 @@
+node_modules
+.DS_Store
+.vercel
+public/min
+public/website
+config.js
+package-lock.json
+test.js
+yarn.lock
