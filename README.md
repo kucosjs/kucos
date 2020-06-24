@@ -1,4 +1,4 @@
-<h1 style="text-align:center;">Introducing Kucos <a href="https://kucos.js.org"><img style="vertical-align:middle;" src="public/website/assets/img/kucos.gif" /></a></h1>
+<h1 style="text-align:center;">Introducing Kucos <a href="https://kucos.js.org"><img style="vertical-align:middle;" src="https://kucos.js.org/assets/img/kucos.gif" /></a></h1>
 
 Simple and privacy focused comments with kudos.
 
