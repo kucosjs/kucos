@@ -2,7 +2,6 @@ const express  = require('express');
 const logger   = require('morgan');
 const mongoose = require('mongoose');
 const path     = require('path');
-//const cors     = require('cors');
 const cookieParser = require('cookie-parser');
 
 const config   = require('./config');
@@ -16,18 +15,6 @@ if (process.env.NODE_ENV == 'production') {
   app.use(logger('dev'));
 }
 
-/* CORS */
-app.use((req, res, next) => {
-  var origin = req.headers.origin;
-  if (config.allowedHostname.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.header('Access-Control-Allow-Credentials', true);
-  next();
-});
-
 // Connecting to the database
 mongoose.connect(database, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }).then(() => {
     console.log("Successfully connected to the database");    
@@ -40,7 +27,16 @@ app.use(cookieParser());
 app.use(express.static( path.join(__dirname, 'public'), { maxAge: 3600000 } )); // 3600000msec == 1hour
 app.use(express.json()); // Parse application/json
 app.use(express.urlencoded({ extended: false })); // Parse application/x-www-form-urlencoded
-//app.use(cors())
+
+/* CORS */
+app.use((req, res, next) => {
+  var origin = req.headers.origin;
+  res.setHeader('Access-Control-Allow-Origin', origin);
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Credentials', true);
+  next();
+});
 
 //Route Prefixes for API
 app.use('/api',validateCookie, api);
@@ -75,13 +71,15 @@ function saveCookie(req, res) {
 }
 
 // handle errors
-// eslint-disable-next-line no-unused-vars
-app.use(function(err, req, res, next) {
-  if (err.status === 500)
-      res.status(500).json({ message: "Something looks wrong" });
-  else
-      res.status(500).json({ message: "Something looks wrong" });
-});
+if (process.env.NODE_ENV == 'production') {
+  // eslint-disable-next-line no-unused-vars
+  app.use(function(err, req, res, next) {
+    if (err.status === 500)
+        res.status(500).json({ message: "Something looks wrong" });
+    else
+        res.status(500).json({ message: "Something looks wrong" });
+  });
+}
 
 // throw 404 if URL not found
 app.all("*", function(req, res) {
