@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const path     = require('path');
 const cookieParser = require('cookie-parser');
 const config   = require('./config');
-const fn       = require('./helpers/functions');
 const api      = require('./routes/api');
 const app      = express();
 
@@ -40,26 +39,7 @@ app.use((req, res, next) => {
 });
 
 //Route Prefixes for API
-app.use('/api',validateCookie, api);
-
-function validateCookie(req, res, next) {
-
-  var etag = req.app.get('etagUser');
-
-  if (etag != undefined && req.cookies.spartan != undefined) {
-    next();
-  } else if ( etag == undefined && req.cookies.spartan != undefined ) {
-    app.set('etagUser', req.cookies.spartan);
-    next();
-  } else if ( etag != undefined && req.cookies.spartan == undefined ) {
-    fn.saveCookie(req, res, etag, next);
-  } else {
-    var uuid = fn.uuid();
-    app.set('etagUser', uuid);
-    fn.saveCookie(req, res, uuid, next);
-  }
-
-} 
+app.use('/api', api);
 
 // handle errors
 if (process.env.NODE_ENV == 'production') {

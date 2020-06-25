@@ -94,10 +94,10 @@ module.exports = {
         if (data.msgid)   var msgid   = fc.cleanHtml(data.msgid);
             else return ar.error(res, "No valid msg id");
 
-        if (req.cookies.spartan == undefined)
+        if (req.cookies.kucos == undefined)
             var userid  = req.app.get('etagUser');
         else
-            userid  = req.cookies.spartan;
+            userid  = req.cookies.kucos;
 
         if (userid == undefined) return ar.error(res, "No valid user id, try reload this page");
 

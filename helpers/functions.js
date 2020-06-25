@@ -1,7 +1,7 @@
 const config = require('../config');
 //const akismet = require('akismet-api')
 
-exports.checkAllowedSite = async function(url) {
+exports.checkAllowedSite = async (url) => {
   url = new URL(url);
 
   if (config.allowedHostname.includes(url.origin))
@@ -10,7 +10,7 @@ exports.checkAllowedSite = async function(url) {
     return true;  
 }
 
-exports.cleanHtml = function (text) {
+exports.cleanHtml = (text) => {
   var map = {
     '&': '&amp;',
     '<': '&lt;',
@@ -22,17 +22,34 @@ exports.cleanHtml = function (text) {
   return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
-exports.saveCookie = function(req, res, uuid, next) {
+exports.validateCookie = (req, res, next) => {
+  var etag = req.app.get('etagUser');
+
+  if (etag != undefined && req.cookies.kucos != undefined) {
+    next();
+  } else if ( etag == undefined && req.cookies.kucos != undefined ) {
+    res.app.set('etagUser', req.cookies.kucos);
+    next();
+  } else if ( etag != undefined && req.cookies.kucos == undefined ) {
+    this.saveCookie(req, res, etag, next);
+  } else {
+    var uuid = this.uuid();
+    res.app.set('etagUser', uuid);
+    this.saveCookie(req, res, uuid, next);
+  }
+} 
+
+exports.saveCookie = (req, res, uuid, next) => {
   if ( req.app.get('etagUser') != undefined ) {
     var expiryDate = new Date(Number(new Date()) + 315360000000); 
-    res.cookie('spartan', uuid, { expires: expiryDate, sameSite: false });
+    res.cookie('kucos', uuid, { expires: expiryDate, sameSite: false });
     return next();
   } else {
     return res.status(401).json("Please turn on JavaScript on your browser, or there's just the cookie verification error.");
   }
 }
 
-exports.uuid = function() {
+exports.uuid = () => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
       var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
