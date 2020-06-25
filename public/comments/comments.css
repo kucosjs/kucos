@@ -271,3 +271,15 @@
     height: 5em;
   }
 }
+
+
+.highlight {
+  border-radius: 3px;
+  animation: highlight 2000ms ease-out;
+}
+
+@keyframes highlight {
+  from {
+    background-color: rgb(255, 145, 0);
+  }
+}

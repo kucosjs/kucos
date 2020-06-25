@@ -31,7 +31,7 @@ class Comments {
             var thtml = this.displayComments(data.comments);
             if (count == undefined) var count = 0;
         
-            document.getElementById("comments").innerHTML = "<div id=\"kucos-root\"><span class=\"_comments_count\">Comments: " + count + "</span>" + this.formArea() + "<br><div id=\"commentsArea\">" + thtml  + "</div></div>";
+            document.getElementById("comments").innerHTML = "<div id=\"kucos-root\"><span class=\"_comments_count\">Comments: <span id=\"_amount\">" + count + "</span></span>" + this.formArea() + "<br><div id=\"commentsArea\">" + thtml  + "</div></div>";
         }).then(() => {
             new Kudoable();
             this.bindEvents();
@@ -72,8 +72,11 @@ class Comments {
         var infos = await data.json();
     
         if (infos.status == 'success') {
-            infoBox.innerHTML = 'Comment added';
-            infoBox.setAttribute("style", "color: green;"); 
+            //infoBox.innerHTML = 'Comment added';
+            //infoBox.setAttribute("style", "color: green;"); 
+            
+            this.appendNewComment(infos, parent)
+
             document.getElementById(`comment-area${parent}`).value = "";
         } else {
             infoBox.innerHTML = infos.message;
@@ -82,6 +85,25 @@ class Comments {
     
         return;
     };
+
+    appendNewComment = (data, id) => {
+        let html = this.commentHtml(data.message);
+        let nid = data.message.id;
+        let pid = data.message.parent_id;
+        let _a = document.getElementById('_amount');
+        _a.innerText = parseInt(_a.innerText)+1;
+        if (id) {
+            document.getElementsByClassName('neqcc' + id)[0].insertAdjacentHTML('afterend', `<ul class="neqcc-${nid} neqcc" id="neqcc-${id}">${html.toString()}</ul>`);
+            document.getElementById('comment-' + nid).classList.add('highlight');
+            document.getElementById('comment-' + pid).scrollIntoView({behavior: 'smooth'});
+        }
+        else {
+            document.getElementById('commentsArea').insertAdjacentHTML('beforeend', `<li class="neqcc-${nid}">${html.toString()}</li>`);
+            let nc = document.getElementById('comment-' + nid);
+            nc.classList.add('highlight');
+            nc.scrollIntoView({behavior: 'smooth'});
+        }
+    }
 
     vote = async (msgid, action) => {
         let kucosServerUrl = "http://localhost:3000";
@@ -134,55 +156,64 @@ class Comments {
         let comments = []
         for (let comment of Object.values(allComments)) {
     
-            if (comment.score == null) var score = 0; else var score = comment.score;
-            if (comment.likes == null) var likes = 0; else var likes = comment.likes;
-            if (comment.dislikes == null) var dislikes = 0; else var dislikes = comment.dislikes;
-    
-            if (comment.website) {
-                var web = `<a href="` + comment.website + `" rel="nofollow" class="author">` + comment.author + `</a>`;
-            } else {
-                var web = `<span class="author">` + comment.author + `</span>`;
-            }
-    
-            let html = `
-            <div class="comment">
-                
-                <div class="votes">
-                    <button class="voteButton upvote" id="upvote-${comment.id}"></button>
-                    <span id="votesCount-${comment.id}" title="Upvotes: ${likes}, Downvotes: ${dislikes}">${score}</span>
-                    <button class="voteButton downvote" id="downvote-${comment.id}"></button>
-                </div>
-                    
-                <div class="commentText">
-    
-                    <div id="comment-` + comment.id + `" class="_comment">
-                        <div class="_header">
-                            ` + web + ` 
-                            <span class="spacer">•</span>
-                            <a href="#comment-` + comment.id + `">
-                                <time title="` + comment.createdOnTime + `" datetime="` + comment.createdOn + `">` + comment.created + `</time>
-                            </a>
-                            <a class="pointer" id="colaps-${comment.id}">[–]</a>
-                        </div>
-                        <div class="_textComment" id="textComment-` + comment.id + `">` + comment.comment + `</div>
-                        <div class="_footer" id="` + comment.id + `"><a href="#comment-` + comment.id + `" class="pointer _areply" id="reply-${comment.id}">Reply</a></div>
-                        <div class="_follow_up"></div>
-                        <div id="_infos${comment.id}"></div>
-                    </div>
-    
-                </div>
-        
-             </div> `;
-            comments.push("<li>" + html.toString() + "</li>")
+            let html = this.commentHtml(comment);
+
+            comments.push(`<li class="neqcc-${comment.id}">${html.toString()}</li>`)
     
             if (comment.children && Object.keys(comment.children).length > 0) {
-                let replies = "<ul class=\"neqcc\" id=\"neqcc-" + comment.id + "\">" + this.displayComments(comment.children) + "</ul>"
+                let replies = `<ul class="neqcc-${comment.id} neqcc" id="neqcc-${comment.id}">${this.displayComments(comment.children)}</ul>`
                 comments = comments.concat(replies)
             }
         }
         return comments.join("");
     };
     
+    commentHtml = (comment) => {
+
+        if (comment.score == null) var score = 0; else var score = comment.score;
+        if (comment.likes == null) var likes = 0; else var likes = comment.likes;
+        if (comment.dislikes == null) var dislikes = 0; else var dislikes = comment.dislikes;
+        if (comment.id == undefined) var id = comment._id; else var id = comment.id;
+
+        if (comment.website) {
+            var web = `<a href="` + comment.website + `" rel="nofollow" class="author">` + comment.author + `</a>`;
+        } else {
+            var web = `<span class="author">` + comment.author + `</span>`;
+        }
+
+        let html = `
+        <div class="comment">
+            
+            <div class="votes">
+                <button class="voteButton upvote" id="upvote-${comment.id}"></button>
+                <span id="votesCount-${comment.id}" title="Upvotes: ${likes}, Downvotes: ${dislikes}">${score}</span>
+                <button class="voteButton downvote" id="downvote-${comment.id}"></button>
+            </div>
+                
+            <div class="commentText">
+        
+                <div id="comment-${comment.id}" class="_comment">
+                    <div class="_header">
+                        ` + web + ` 
+                        <span class="spacer">•</span>
+                        <a href="#comment-${comment.id}">
+                            <time datetime="${comment.createdOn}">${comment.created}</time>
+                        </a>
+                        <a class="pointer" id="colaps-${comment.id}">[–]</a>
+                    </div>
+                    <div class="_textComment" id="textComment-${comment.id}">${comment.comment}</div>
+                    <div class="_footer" id="` + id + `"><a href="#comment-${comment.id}" class="pointer _areply" id="reply-${comment.id}">Reply</a></div>
+                    <div class="_follow_up"></div>
+                    <div id="_infos${comment.id}"></div>
+                </div>
+        
+            </div>
+        
+         </div>`;
+
+         return html;
+    }
+
     formArea = (type, id) => {
     
         if (type == 'reply') {

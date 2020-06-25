@@ -1,3 +1,5 @@
-*.js
-*.html
-*.json
+# Ignore everything:
+/*
+
+# Except /test:
+!/**/test

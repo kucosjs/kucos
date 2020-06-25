@@ -7,4 +7,4 @@ config.js
 package-lock.json
 test.js
 yarn.lock
-test/tmp
+test/*

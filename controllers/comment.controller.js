@@ -2,7 +2,6 @@ const ar = require("../helpers/responses");
 const fc = require("../helpers/functions")
 const Comment = require('../models/comment.model');
 const Vote = require("../models/vote.model");
-const moment = require('moment');  
 const Slimdown = require("../helpers/slimdown");
 let sd = new Slimdown();
 
@@ -29,7 +28,10 @@ module.exports = {
 
         Comment.create({ article_id: article_url, author: author, comment: comment, email: email, website: website, parent_id: parent_id}, function(err, data) {
             if (err) return ar.error(res, "Error: EO17");
-            if (data) return ar.created(res, data);
+
+            let comment = fc.commentResponse([data], 'created');
+
+            if (comment) return ar.created(res, comment);
             else return ar.error(res, "Problem with saving the comment, try again.");
         });
     },
@@ -40,11 +42,7 @@ module.exports = {
         Comment.find({article_id: url}).sort({createdOn: 1}).lean().exec()
         .then(data => {
 
-            var comments = [];
-                
-            data.forEach(d => {
-                comments = [].concat(comments, {id: d._id, author: d.author, comment: d.comment, email: d.email, website: d.website, parent_id: d.parent_id, createdOn: d.createdOn, createdOnTime: moment(d.createdOn).format('dddd, MMMM Do YYYY, HH:mm:ss'), created: moment(d.createdOn).fromNow(), likes: d.likes, dislikes: d.dislikes, score: d.likes - d.dislikes });
-            });                
+            let comments = fc.commentResponse(data);
 
             let rec = (comment, threads) => {
                 for (var thread in threads) {

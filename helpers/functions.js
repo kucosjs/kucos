@@ -1,4 +1,5 @@
 const config = require('../config');
+const moment = require('moment');
 //const akismet = require('akismet-api')
 
 exports.checkAllowedSite = async (url) => {
@@ -54,6 +55,19 @@ exports.uuid = () => {
       var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
   });
+}
+
+exports.commentResponse = (data, action=null) => {
+  var comments = [];
+
+  data.map(d => {
+    comments = [].concat(comments, {id: d._id, author: d.author, comment: d.comment, email: d.email, website: d.website, parent_id: d.parent_id, createdOn: d.createdOn, createdOnTime: moment(d.createdOn).format('dddd, MMMM Do YYYY, HH:mm:ss'), created: moment(d.createdOn).fromNow(), likes: d.likes, dislikes: d.dislikes, score: d.likes - d.dislikes });
+  });
+  
+  if (action == 'created')
+    return comments[0];
+  else
+    return comments;
 }
 
 /*exports.checkCommentSpam = async function checkCommentSpam(req, data) {
