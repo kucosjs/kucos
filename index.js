@@ -3,8 +3,8 @@ const logger   = require('morgan');
 const mongoose = require('mongoose');
 const path     = require('path');
 const cookieParser = require('cookie-parser');
-
 const config   = require('./config');
+const fn       = require('./helpers/functions');
 const api      = require('./routes/api');
 const app      = express();
 
@@ -31,11 +31,12 @@ app.use(express.urlencoded({ extended: false })); // Parse application/x-www-for
 /* CORS */
 app.use((req, res, next) => {
   var origin = req.headers.origin;
+  if (origin == undefined) origin = config.allowedHostname[0];
   res.setHeader('Access-Control-Allow-Origin', origin);
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.header('Access-Control-Allow-Credentials', true);
-  next();
+  return next();
 });
 
 //Route Prefixes for API
@@ -43,32 +44,22 @@ app.use('/api',validateCookie, api);
 
 function validateCookie(req, res, next) {
 
-  if ( req.app.get('etagUser') != undefined) {
-    if (req.app.get('etagUser') != req.cookies.spartan) {
-      saveCookie(req, res);
-    }
-  }
+  var etag = req.app.get('etagUser');
 
-  if ( req.app.get('etagUser') == undefined && req.cookies.spartan != undefined) {
-    app.set('etagUser', req.cookies.spartan)
-  }
-
-  if ( req.cookies.spartan != undefined ) {
+  if (etag != undefined && req.cookies.spartan != undefined) {
     next();
+  } else if ( etag == undefined && req.cookies.spartan != undefined ) {
+    app.set('etagUser', req.cookies.spartan);
+    next();
+  } else if ( etag != undefined && req.cookies.spartan == undefined ) {
+    fn.saveCookie(req, res, etag, next);
   } else {
-    saveCookie(req, res);
+    var uuid = fn.uuid();
+    app.set('etagUser', uuid);
+    fn.saveCookie(req, res, uuid, next);
   }
 
 } 
-
-function saveCookie(req, res) {
-  if ( req.app.get('etagUser') != undefined ) {
-    var expiryDate = new Date(Number(new Date()) + 315360000000); 
-    res.cookie('spartan', req.app.get('etagUser'), { expires: expiryDate, sameSite: false });
-  } else {
-    return res.status(401).json("Please turn on JavaScript on your browser, or there's just the cookie verification error.");
-  }
-}
 
 // handle errors
 if (process.env.NODE_ENV == 'production') {

@@ -22,6 +22,23 @@ exports.cleanHtml = function (text) {
   return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
+exports.saveCookie = function(req, res, uuid, next) {
+  if ( req.app.get('etagUser') != undefined ) {
+    var expiryDate = new Date(Number(new Date()) + 315360000000); 
+    res.cookie('spartan', uuid, { expires: expiryDate, sameSite: false });
+    return next();
+  } else {
+    return res.status(401).json("Please turn on JavaScript on your browser, or there's just the cookie verification error.");
+  }
+}
+
+exports.uuid = function() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+  });
+}
+
 /*exports.checkCommentSpam = async function checkCommentSpam(req, data) {
 
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;

@@ -92,9 +92,14 @@ module.exports = {
         let data       = req.body;
 
         if (data.msgid)   var msgid   = fc.cleanHtml(data.msgid);
-            else return ar.error(res, "No valid msg id")
-        if (data.userid)  var userid  = fc.cleanHtml(data.userid);
-            else return ar.error(res, "No valid user id")
+            else return ar.error(res, "No valid msg id");
+
+        if (req.cookies.spartan == undefined)
+            var userid  = req.app.get('etagUser');
+        else
+            userid  = req.cookies.spartan;
+
+        if (userid == undefined) return ar.error(res, "No valid user id, try reload this page");
 
         if (data.action == "upvote")
             var action = "upvote";

@@ -1,6 +1,6 @@
 class Comments {
     constructor() {
-        this.cookies();
+        this.styles();
         this.renderComments();
     }
   
@@ -17,11 +17,8 @@ class Comments {
       }
     };
 
-    cookies = async () => {
+    styles = () => {
         document.write('<link rel="stylesheet" type="text/css" href="/min/kucos.min.css">');
-        if ( this.getCookie('spartan') == null ) {
-            await this.setCookie();
-        } 
     };
 
     renderComments = async () => {
@@ -87,8 +84,6 @@ class Comments {
     };
 
     vote = async (msgid, action) => {
-        let userid = this.getCookie('spartan');
-    
         let kucosServerUrl = "http://localhost:3000";
         const data = await fetch(kucosServerUrl + '/api/comments/vote', { 
             // FIX: changed application/json to application/x-www-form-urlencoded for sending cookies to the server
@@ -99,7 +94,7 @@ class Comments {
             },
             credentials: 'include',
             method: 'POST',
-            body: 'msgid=' + encodeURIComponent(msgid) + '&userid=' + encodeURIComponent(userid) + '&action=' + encodeURIComponent(action)
+            body: 'msgid=' + encodeURIComponent(msgid) + '&action=' + encodeURIComponent(action)
         })
     
         let infos = await data.json();
@@ -277,36 +272,7 @@ class Comments {
         }
         return text;
     };
-    
-    setCookie = async () => {
-        //10 * 365 * 24 * 60 * 60 * 1000 === 315360000000, or 10 years in milliseconds
-        var expires = "";
-        var date = new Date();
-        date.setTime(date.getTime() + 315360000000);
-        expires = "; expires=" + date.toUTCString();
-        // SameSite=Strict
-        document.cookie = "spartan=" + (this.uuidv4() || "") + ";SameSite=None"  + expires + "; path=/";
-    };
-    
-    getCookie = (name) => {
-        var nameEQ = name + "=";
-        var ca = document.cookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-          var c = ca[i];
-          while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-          if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-        }
-        return null;
-    };
 
-    uuidv4 = () => {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-    };
-    
 }
 
 new Comments();
-
