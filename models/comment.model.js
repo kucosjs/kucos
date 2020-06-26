@@ -47,6 +47,10 @@ const commentSchema = new Schema({
   updatedOn: {
     type: Date,
     default: Date.now
+  },
+  userid: {
+    type: String,
+    required: true
   }
 });
 

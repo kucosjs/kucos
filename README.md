@@ -1,6 +1,7 @@
 <h1 style="text-align:center;">Introducing Kucos <a href="https://kucos.js.org"><img style="vertical-align:middle;" src="https://kucos.js.org/assets/img/kucos.gif" /></a></h1>
-
 <img src="https://i.imgur.com/oxUGn7M.gif" style="width: 600px;display: block; margin: 0 auto;" alt="Screenshot of Kucos">
+
+### Please notice, this is a version that is being heavily developed, so I do not recommend using it in production yet. But to try it out locally is highly recommended! 
 
 Simple and privacy focused comments with kudos.
 
@@ -21,6 +22,14 @@ A simple _Markdown_ is also available, [here](https://kucos.js.org/markdown.html
 - Voting on comments
 - Markdown text formatting
 - Adding Kudos under post
+
+## Todo
+- [x] Edit own comments within an hour
+- [ ] Simple moderation of comments by the website owner
+- [ ] Checking whether a comment is spam.
+- [ ] Antiflood function
+- [ ] Fast and lightweight code highlighting in comments
+- [ ] Internationalization (i18n)
 
 ## Add Kucos to your website
 

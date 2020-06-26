@@ -22,7 +22,6 @@ class Comments {
     };
 
     renderComments = async () => {
-
         document.getElementById("comments").innerHTML = `<div id="kucos-root"><div class="loader"><h3>Loading...</h3></div></div>`;
 
         await this.getComments().then((data) => {
@@ -35,10 +34,11 @@ class Comments {
         }).then(() => {
             new Kudoable();
             this.bindEvents();
+            this.editableGetMyComments();
         }) 
     };
 
-    postComment = async (e, element, parent_id=null) => {
+    postComment = async (e, element, parent_id=null, type) => {
         let article_url = window.location.href;
 
         if (parent_id != null) {
@@ -55,27 +55,23 @@ class Comments {
 
         let infoBox = document.getElementById(`_infos${parent}`);
     
-        let kucosServerUrl = "http://localhost:3000";
-        const data = await fetch(kucosServerUrl + '/api/comments', { 
-            // FIX: changed application/json to application/x-www-form-urlencoded for sending cookies to the server
-            // I have no idea why, but application/json doesn't send cookies with POST.
-            headers: { 
-                'Accept': 'application/x-www-form-urlencoded', 
-                'Content-Type': 'application/x-www-form-urlencoded' 
-            },
-            credentials: 'include',
-            method: 'POST',
-            body: 'article_url=' + encodeURIComponent(article_url) + '&comment=' + encodeURIComponent(comment) + '&author=' + encodeURIComponent(author)
-             + '&email=' + encodeURIComponent(email) + '&website=' + encodeURIComponent(website) + '&parent_id=' + encodeURIComponent(parent_id)
-        });
-    
-        var infos = await data.json();
-    
+        if (type == 'addedit')
+            var method = 'PATCH';
+        else
+            var method = 'POST';
+
+        const infos = await this.request('article_url=' + encodeURIComponent(article_url) + '&comment=' + encodeURIComponent(comment) + '&author=' + encodeURIComponent(author)
+        + '&email=' + encodeURIComponent(email) + '&website=' + encodeURIComponent(website) + '&parent_id=' + encodeURIComponent(parent_id), method, '/api/comments');
+
         if (infos.status == 'success') {
             //infoBox.innerHTML = 'Comment added';
             //infoBox.setAttribute("style", "color: green;"); 
             
-            this.appendNewComment(infos, parent)
+            if (type == 'addedit')
+                document.getElementById(`textComment${parent}`).innerHTML = infos.message.comment;
+            else
+                this.appendNewComment(infos, parent);
+                this.editableSaveMyComments(infos.message.id);
 
             document.getElementById(`comment-area${parent}`).value = "";
         } else {
@@ -96,30 +92,19 @@ class Comments {
             document.getElementsByClassName('neqcc' + id)[0].insertAdjacentHTML('afterend', `<ul class="neqcc-${nid} neqcc" id="neqcc-${id}">${html.toString()}</ul>`);
             document.getElementById('comment-' + nid).classList.add('highlight');
             document.getElementById('comment-' + pid).scrollIntoView({behavior: 'smooth'});
+            this.appendEditBtn(nid);
         }
         else {
             document.getElementById('commentsArea').insertAdjacentHTML('beforeend', `<li class="neqcc-${nid}">${html.toString()}</li>`);
             let nc = document.getElementById('comment-' + nid);
             nc.classList.add('highlight');
             nc.scrollIntoView({behavior: 'smooth'});
+            this.appendEditBtn(nid);
         }
     }
 
     vote = async (msgid, action) => {
-        let kucosServerUrl = "http://localhost:3000";
-        const data = await fetch(kucosServerUrl + '/api/comments/vote', { 
-            // FIX: changed application/json to application/x-www-form-urlencoded for sending cookies to the server
-            // I have no idea why, but application/json doesn't send cookies with POST.
-            headers: { 
-                'Accept': 'application/x-www-form-urlencoded', 
-                'Content-Type': 'application/x-www-form-urlencoded' 
-            },
-            credentials: 'include',
-            method: 'POST',
-            body: 'msgid=' + encodeURIComponent(msgid) + '&action=' + encodeURIComponent(action)
-        })
-    
-        let infos = await data.json();
+        let infos = await this.request('msgid=' + encodeURIComponent(msgid) + '&action=' + encodeURIComponent(action), 'POST', '/api/comments/vote');
     
         if (infos.status == 'success') {
             var vcel = document.getElementById(`votesCount-${msgid}`);
@@ -130,21 +115,17 @@ class Comments {
             inel.innerHTML = infos.message;
             inel.setAttribute("style", "color: red;"); 
         }
-    
         return;
     };
 
     getComments = async () => {
         let article_url = encodeURIComponent(window.location.href);
-        let kucosServerUrl = "http://localhost:3000";
-        //let response = await fetch(kucosServerUrl + '/api/comments/' + article_url);
+        let data = this.request(null, 'GET', '/api/comments/' + article_url)
+        return data;
+    };
 
-        let response = await fetch(kucosServerUrl + '/api/comments/' + article_url, { 
-            credentials: "include",
-        })
-        
-        var data = await response.json();
-
+    getRowComment = async (id) => {
+        let data = this.request(null, 'GET', '/api/comments/row/' + id)
         return data;
     };
 
@@ -170,10 +151,10 @@ class Comments {
     
     commentHtml = (comment) => {
 
-        if (comment.score == null) var score = 0; else var score = comment.score;
-        if (comment.likes == null) var likes = 0; else var likes = comment.likes;
-        if (comment.dislikes == null) var dislikes = 0; else var dislikes = comment.dislikes;
-        if (comment.id == undefined) var id = comment._id; else var id = comment.id;
+        let score = comment.score ? comment.score : 0;
+        let likes = comment.likes ? comment.likes : 0;
+        let dislikes = comment.dislikes ? comment.dislikes : 0;
+        let edited = comment.createdOnTime != comment.updatedOn ? `<span title="${comment.updatedOn}"><em>edited</em></span>` : ''
 
         if (comment.website) {
             var web = `<a href="` + comment.website + `" rel="nofollow" class="author">` + comment.author + `</a>`;
@@ -197,12 +178,15 @@ class Comments {
                         ` + web + ` 
                         <span class="spacer">•</span>
                         <a href="#comment-${comment.id}">
-                            <time datetime="${comment.createdOn}">${comment.created}</time>
+                            <time title="${comment.createdOnTime}" datetime="${comment.createdOn}">${comment.created}</time>
                         </a>
+                        ${edited}
                         <a class="pointer" id="colaps-${comment.id}">[–]</a>
                     </div>
                     <div class="_textComment" id="textComment-${comment.id}">${comment.comment}</div>
-                    <div class="_footer" id="` + id + `"><a href="#comment-${comment.id}" class="pointer _areply" id="reply-${comment.id}">Reply</a></div>
+                    <div class="_footer">
+                        <a href="#comment-${comment.id}" class="pointer _areply" id="reply-${comment.id}">Reply</a> 
+                    </div>
                     <div class="_follow_up"></div>
                     <div id="_infos${comment.id}"></div>
                 </div>
@@ -219,6 +203,10 @@ class Comments {
         if (type == 'reply') {
             var input = '<button class="btn_addreply" id="addreply-' + id + '">Submit</button>';
             var text = 'Your reply...';
+            var idinput = "-"+id;
+        } else if (type == 'edit') {
+            var input = '<button class="btn_addreply" id="addedit-' + id + '">Edit</button>';
+            var text = 'Your edit...';
             var idinput = "-"+id;
         } else {
             var input = '<input id="submitComment" type="submit" value="Submit">';
@@ -241,7 +229,7 @@ class Comments {
         return formArea;
     };
 
-    commentsArea = (event) => {
+    commentsArea = async (event) => {
 
         var getSelectedText = this.getSelectionText();
         var selectedText = "";
@@ -255,22 +243,29 @@ class Comments {
 			let type = parts[0];
 			let id = parts[parts.length-1];
             let eid = event.target.id.split("reply-")[1]; 
-            
-			if (type == 'reply') {
+            let prevChild = document.getElementById(`childlist-${id}`);
 
-                let inputElem = this.formArea('reply', id);
-				let childListElemId = `childlist-${event.target.id.split("reply-")[1]}`;
+			if (type == 'reply' || type == 'edit') {
+
+                if (prevChild) document.getElementById(`childlist-${id}`).remove(); 
+
+                let inputElem = this.formArea(type, id);
+				let childListElemId = `childlist-${id}`;
 				let childListElem = document.getElementById(childListElemId);
 				
 				if(childListElem == null) {
-					childListElem = `<ul id="childlist-${event.target.id.split("reply-")[1]}"> ${inputElem} </ul>`;
-					document.getElementById(`comment-${id}`).innerHTML += childListElem;								
+					childListElem = `<ul id="childlist-${id}"> ${inputElem} </ul>`;
+                    document.getElementById(`comment-${id}`).innerHTML += childListElem;
 				} else {
 					childListElem.innerHTML = childListElem.innerHTML;
                 }
 
-                document.getElementById(`comment-area-${id}`).value = selectedText;
-                //document.getElementById(`comment-area-${id}`).focus();
+                if (type == 'edit') {
+                    var rowComment = await this.getRowComment(id);
+                    document.getElementById(`comment-area-${id}`).value = rowComment.message;
+                } else {
+                    document.getElementById(`comment-area-${id}`).value = selectedText;
+                }
 
             } else if (type == 'colaps') {
 
@@ -283,15 +278,42 @@ class Comments {
                     document.getElementById(`colaps-${id}`).innerHTML = "[+]";
                 }
 
-			} else if (type == 'addreply') {
+			} else if (type == 'addreply' || type == 'addedit') {
                 let e = null;
                 let el = null; 
-                this.postComment(e, el, id);
+                this.postComment(e, el, id, type);
+                //prevChild.remove();
 			} else if(type == 'upvote' || type == 'downvote') {
                 this.vote(id, type);
 			}
 		}
 
+    };
+
+    request = async (body=null, method, param) => {        
+        let kucosServerUrl = "http://localhost:3000";
+
+        if (method == 'POST' || method == 'PATCH') {
+
+            const data = await fetch(kucosServerUrl + param, { 
+                // FIX: changed application/json to application/x-www-form-urlencoded for sending cookies to the server
+                // I have no idea why, but application/json doesn't send cookies with POST.
+                headers: { 
+                    'Accept': 'application/x-www-form-urlencoded', 
+                    'Content-Type': 'application/x-www-form-urlencoded' 
+                },
+                credentials: 'include',
+                method: method,
+                body: body
+            });
+            return await data.json();
+
+        } else if (method == 'GET') {
+            let response = await fetch(kucosServerUrl + param, { 
+                credentials: "include",
+            })
+            return await response.json();
+        }
     };
 
     getSelectionText = () => {
@@ -302,6 +324,58 @@ class Comments {
             text = document.selection.createRange().text;
         }
         return text;
+    };
+
+    editableSaveMyComments = (id) => {
+        var storage = localStorage.getItem('comments');
+        var comments = JSON.parse(storage);
+        if (storage) {
+            // Check if id exist already in localstorage 
+            if (comments.some(item => item.id === id)) {
+                return
+            }
+        }
+
+        var now = new Date();
+        var item = {
+            id: id,
+            expiry: now.getTime() + 3600000
+        };
+
+        storage = storage ? comments : [];
+        storage = [].concat(storage, item);
+        localStorage.setItem('comments', JSON.stringify(storage));
+    };
+
+    editableGetMyComments = () => {
+        var storage = localStorage.getItem('comments');
+        var data = JSON.parse(storage);
+        if (!storage) return null;
+        var now = new Date();
+
+        for (var i = 0; i < data.length; i++) {
+            var id = data[i].id;
+            var expiry = data[i].expiry;
+            // remove edit button from expired comments
+            // only 1 hour can by comment editable
+            if (now.getTime() > expiry) {
+                data.splice(i, 1);
+                i--; 
+            }
+            this.appendEditBtn(id);
+        }
+
+        if (JSON.stringify(data) != storage) {
+            localStorage.setItem('comments', JSON.stringify(data))
+        }
+    };
+
+    appendEditBtn = (id) => {
+        try {
+            var editbtn = ` <a href="#comment-${id}" class="pointer _areply" id="edit-${id}">Edit</a>`;
+            document.getElementById('reply-' + id).insertAdjacentHTML('afterend', editbtn); 
+        } catch (e) {}
+
     };
 
 }

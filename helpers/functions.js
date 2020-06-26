@@ -1,5 +1,10 @@
 const config = require('../config');
 const moment = require('moment');
+const ar = require('./responses');
+const fc = require("../helpers/functions");
+const Slimdown = require("../helpers/slimdown");
+let sd = new Slimdown();
+
 //const akismet = require('akismet-api')
 
 exports.checkAllowedSite = async (url) => {
@@ -61,13 +66,24 @@ exports.commentResponse = (data, action=null) => {
   var comments = [];
 
   data.map(d => {
-    comments = [].concat(comments, {id: d._id, author: d.author, comment: d.comment, email: d.email, website: d.website, parent_id: d.parent_id, createdOn: d.createdOn, createdOnTime: moment(d.createdOn).format('dddd, MMMM Do YYYY, HH:mm:ss'), created: moment(d.createdOn).fromNow(), likes: d.likes, dislikes: d.dislikes, score: d.likes - d.dislikes });
+    comments = [].concat(comments, {id: d._id, author: d.author, comment: sd.render(fc.cleanHtml(d.comment)), email: d.email, website: d.website, parent_id: d.parent_id, createdOn: d.createdOn, createdOnTime: moment(d.createdOn).format('dddd, MMMM Do YYYY, HH:mm:ss'), created: moment(d.createdOn).fromNow(), updatedOn: moment(d.updatedOn).format('dddd, MMMM Do YYYY, HH:mm:ss'), likes: d.likes, dislikes: d.dislikes, score: d.likes - d.dislikes });
   });
   
   if (action == 'created')
     return comments[0];
   else
     return comments;
+}
+
+exports.validateUser = (req, res) => {
+  if (req.cookies.kucos == undefined)
+      var userid  = req.app.get('etagUser');
+  else
+      userid  = req.cookies.kucos;
+
+  if (userid == undefined) return ar.error(res, "No valid user id, try reload this page");
+
+  return userid;
 }
 
 /*exports.checkCommentSpam = async function checkCommentSpam(req, data) {

@@ -10,6 +10,8 @@ module.exports = {
         let article_url = data.id.replace(/#comment-(.*)/, '');
         let vote        = data.kudo;
 
+        if (data == undefined) return ar.validationError(res, 'No data has been sent');
+
         const isAllowed = await fc.checkAllowedSite(article_url);
         if (isAllowed) return ar.validationError(res, {kudos: "This post is not allowed to kudos"}); 
         
