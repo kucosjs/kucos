@@ -48,7 +48,7 @@ exports.validateCookie = (req, res, next) => {
 exports.saveCookie = (req, res, uuid, next) => {
   if ( req.app.get('etagUser') != undefined ) {
     var expiryDate = new Date(Number(new Date()) + 315360000000); 
-    res.cookie('kucos', uuid, { expires: expiryDate, sameSite: false });
+    res.cookie('kucos', uuid, { expires: expiryDate, sameSite: 'None', secure: true });
     return next();
   } else {
     return res.status(401).json("Please turn on JavaScript on your browser, or there's just the cookie verification error.");
