@@ -1,0 +1,36 @@
+{% include "../templates/header.html" %}
+<div class="posts">
+    <section class="post">
+        <div class="post-description">
+
+
+            <table class="pure-table pure-table-horizontal">
+                <thead>
+                    <tr>
+                        <th>URL</th>
+                        <th>Comments</th>
+                        <!-- <th>Reports</th> -->
+                        <th>Spam</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for i in data %}
+                    <tr>
+                        <div>
+                            <td><a href="/comments/?url={{i.article_id}}">{{i.article_id}}</a></td>
+                            <td>{{i.totalComments}}</td>
+                            <!-- <td>{{i.totalReports}}</td> -->
+                            <td>{{i.totalSpam}}</td>
+                        </div>
+                    </tr>
+                    {% endfor %}
+
+
+                </tbody>
+            </table>
+
+        </div>
+    </section>
+</div>
+{% include "../templates/footer.html" %}

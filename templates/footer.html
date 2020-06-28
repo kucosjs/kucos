@@ -1,0 +1,79 @@
+        </div>
+    </div>
+</div>
+
+{% if isLoggedIn == true %}
+<script>
+function removeComment(id, url) {
+    request(null, 'DELETE', '/remove/' + id + '/?url=' + url + '&' + spam);
+    document.getElementById(id).remove();
+}
+
+async function spam(id) {
+    if ( document.getElementById('notspam-' + id) ) {
+        // change to spam and report to akismet
+
+        document.getElementById('notspam-' + id).innerText = "Sending...";
+        var res = await request(null, 'PATCH', '/reportspam/' + id);
+
+        if (res.status == 'success' || res.status == 'error') {
+            document.getElementById('notspam-' + id).setAttribute("id", "spam-" + id); 
+            document.getElementById('background-' + id).setAttribute("style", "background-color: red;");
+            document.getElementById('spam-' + id).innerText = "Not spam";
+        }
+
+    } else if ( document.getElementById('spam-' + id) ) {
+        // change to notSpam and report to akismet
+
+        document.getElementById('spam-' + id).innerText = "Sending...";
+        var res = await request(null, 'PATCH', '/notspam/' + id);
+
+        if (res.status == 'success' || res.status == 'error') {
+            document.getElementById('spam-' + id).setAttribute("id", "notspam-" + id); 
+            document.getElementById('background-' + id).setAttribute("style", "background-color: #fff;");
+            document.getElementById('notspam-' + id).innerText = "Spam";
+        }
+
+    }
+}
+</script>
+
+
+{% endif %}
+
+<script>
+function login() {
+    let password = document.getElementById("password").value;
+    password = JSON.stringify({password: password})
+    request(password, 'POST', '/login')
+}
+
+async function request(body=null, method, param) {
+    let kucosServerUrl = "{{kucosUrl}}";
+    if (method == 'POST' || method == 'PATCH' || method == 'DELETE') {
+        let data = await fetch(kucosServerUrl + param, { 
+            headers: { 
+                'Accept': 'application/json', 
+                'Content-Type': 'application/json' 
+            },
+            method: method,
+            body: body
+        });
+        let infos = await data.json();
+
+        if (param == '/login') {
+            if (infos.status == 'success') window.location.href = "/overview";
+            else document.getElementById("infos").innerText = infos.message;
+        }
+        return infos;
+
+    } else if (method == 'GET') {
+        let data = await fetch(kucosServerUrl + param)
+        return await data.json();
+    }
+}
+
+</script>
+
+</body>
+</html>

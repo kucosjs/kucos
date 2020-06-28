@@ -3,6 +3,7 @@ const fc = require("../helpers/functions");
 const Comment = require('../models/comment.model');
 const Vote = require("../models/vote.model");
 const moment = require('moment');
+const config = require('../config');
 
 module.exports = {
 
@@ -20,7 +21,6 @@ module.exports = {
         if (data.username) return ar.created(res, "Comment added."); // honey pot
         var article_url = data.article_url.replace(/#comment-(.*)/,'');
         var userid  = fc.validateUser(req, res);
-        //await fc.checkCommentSpam(req, {comment: comment, email: email, name: author})
 
         const isAllowed = await fc.checkAllowedSite(article_url);
         if (isAllowed) return ar.validationError(res, "This post is not allowed to comment."); 
@@ -48,6 +48,9 @@ module.exports = {
                     data.save(function(err, data) {
                         if (err) return ar.error(res, "Failed to edit this comment.");
                         else {
+                            if (config.enableAkismet) {
+                                fc.checkCommentSpam(req, res, {comment: comment, email: email, author: author, article_url: data.article_id, parent_id: parent_id}, 'edit')
+                            }
                             let edit = fc.commentResponse([data], 'created');
                             return ar.success(res, edit)
                         }
@@ -58,6 +61,12 @@ module.exports = {
         } else {
             Comment.create({ article_id: article_url, author: author, comment: comment, email: email, website: website, parent_id: parent_id, userid: userid}, function(err, data) {
                 if (err) return ar.error(res, "Error: EO17");
+
+                fc.stats(req, res, article_url, 'comment');
+
+                if (config.enableAkismet) {
+                    fc.checkCommentSpam(req, res, {comment: data.comment, email: data.email, author: data.author, id: data._id, article_url: article_url, parent_id: parent_id}, 'comment')
+                }
 
                 let comment = fc.commentResponse([data], 'created');
 
@@ -80,7 +89,10 @@ module.exports = {
     getComments: function(req, res) {
         var url = decodeURIComponent(req.params.id).replace(/#comment-(.*)/,'');
 
-        Comment.find({article_id: url}).sort({createdOn: 1}).lean().exec()
+        return Comment.find({article_id: url}).sort({createdOn: 1}).lean().exec()
+        .then(async data => {
+            return await fc.filterSpam(data);
+        })
         .then(data => {
 
             let comments = fc.commentResponse(data);

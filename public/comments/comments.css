@@ -283,3 +283,13 @@
     background-color: rgb(255, 145, 0);
   }
 }
+
+#kucos-root .comment.spam {
+  opacity: 0.4;
+  margin-left: 1px;
+}
+
+#kucos-root .dnone {
+  display: none;
+}
+

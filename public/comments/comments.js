@@ -30,7 +30,14 @@ class Comments {
             var thtml = this.displayComments(data.comments);
             if (count == undefined) var count = 0;
         
-            document.getElementById("comments").innerHTML = "<div id=\"kucos-root\"><span class=\"_comments_count\">Comments: <span id=\"_amount\">" + count + "</span></span>" + this.formArea() + "<br><div id=\"commentsArea\">" + thtml  + "</div></div>";
+            document.getElementById("comments").innerHTML = 
+                                            `<div id="kucos-root">
+                                                <span class="_comments_count">
+                                                    Comments: <span id="_amount">${count}</span>
+                                                </span>
+                                                ${this.formArea()}
+                                                <div id="commentsArea">${thtml}</div>
+                                            </div>`;
         }).then(() => {
             new Kudoable();
             this.bindEvents();
@@ -155,6 +162,16 @@ class Comments {
         let likes = comment.likes ? comment.likes : 0;
         let dislikes = comment.dislikes ? comment.dislikes : 0;
         let edited = comment.createdOnTime != comment.updatedOn ? `<span title="${comment.updatedOn}"><em>edited</em></span>` : ''
+        
+        if (comment.spam == 1) {
+            var spamInfo = `<span><em>This comment must be reviewed before publishing it.</em></span>`;
+            var spam = ' spam';
+            var dnone = ' dnone';
+        } else {
+            var spamInfo = '';
+            var spam = ''; 
+            var dnone = '';
+        }
 
         if (comment.website) {
             var web = `<a href="` + comment.website + `" rel="nofollow" class="author">` + comment.author + `</a>`;
@@ -163,9 +180,9 @@ class Comments {
         }
 
         let html = `
-        <div class="comment">
+        <div class="comment${spam}">
             
-            <div class="votes">
+            <div class="votes${dnone}">
                 <button class="voteButton upvote" id="upvote-${comment.id}"></button>
                 <span id="votesCount-${comment.id}" title="Upvotes: ${likes}, Downvotes: ${dislikes}">${score}</span>
                 <button class="voteButton downvote" id="downvote-${comment.id}"></button>
@@ -182,9 +199,10 @@ class Comments {
                         </a>
                         ${edited}
                         <a class="pointer" id="colaps-${comment.id}">[–]</a>
+                        ${spamInfo}
                     </div>
                     <div class="_textComment" id="textComment-${comment.id}">${comment.comment}</div>
-                    <div class="_footer">
+                    <div class="_footer${dnone}">
                         <a href="#comment-${comment.id}" class="pointer _areply" id="reply-${comment.id}">Reply</a> 
                     </div>
                     <div class="_follow_up"></div>

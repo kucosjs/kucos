@@ -1,0 +1,34 @@
+{% include "../templates/header.html" %}
+<div class="posts">
+    <section class="post">
+        <div class="post-description">
+
+            <table class="pure-table pure-table-horizontal">
+                <thead>
+                    <tr>
+                        <th>Comment</th>
+                        <th>Remove</th>
+                        <th>Spam</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in commets %}
+                    <tr id="{{i.id}}">
+                        {% if spamComment|contains(i.id) %}
+                            <td id="background-{{i.id}}"style="background-color: red;">{{i.comment}}</td>
+                            <td><a onclick="javascript:removeComment('{{i.id}}', '{{i.article_id}}');">Remove</a></td>
+                            <td><a id="spam-{{i.id}}" onclick="javascript:spam('{{i.id}}');">Not spam</a></td>
+                        {% else %}
+                            <td id="background-{{i.id}}">{{i.comment}}</td>
+                            <td><a onclick="javascript:removeComment('{{i.id}}', '{{i.article_id}}');">Remove</a></td>
+                            <td><a id="notspam-{{i.id}}" onclick="javascript:spam('{{i.id}}');">Spam</a></td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </section>
+</div>
+{% include "../templates/footer.html" %}

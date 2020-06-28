@@ -51,6 +51,10 @@ const commentSchema = new Schema({
   userid: {
     type: String,
     required: true
+  },
+  spam: {
+    type: Number,
+    default: 0
   }
 });
 

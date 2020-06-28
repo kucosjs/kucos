@@ -2,8 +2,11 @@ const express  = require('express');
 const logger   = require('morgan');
 const mongoose = require('mongoose');
 const path     = require('path');
+const swig     = require('swig');
+const session  = require('express-session');
 const cookieParser = require('cookie-parser');
 const config   = require('./config');
+const admin  = require('./routes/admin');
 const api      = require('./routes/api');
 const app      = express();
 
@@ -22,7 +25,13 @@ mongoose.connect(database, { useNewUrlParser: true, useCreateIndex: true, useUni
     process.exit();
 });
 
+swig.setDefaults({ loader: swig.loaders.fs(__dirname + '/templates' )});
+app.engine('html', swig.renderFile);
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'html');
+
 app.use(cookieParser());
+app.use(session({secret: "KUCOS_CHANGE_THIS", resave:false, saveUninitialized:true}));
 app.use(express.static( path.join(__dirname, 'public'), { maxAge: 3600000 } )); // 3600000msec == 1hour
 app.use(express.json()); // Parse application/json
 app.use(express.urlencoded({ extended: false })); // Parse application/x-www-form-urlencoded
@@ -37,6 +46,16 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Credentials', true);
   return next();
 });
+
+
+swig.setFilter('contains', function(arr, value) {
+  if (arr.some(a => a.comment_id === value)) {
+    return true;
+  }
+});
+
+//Route Prefixes for Admin panel
+app.use('/', admin);
 
 //Route Prefixes for API
 app.use('/api', api);

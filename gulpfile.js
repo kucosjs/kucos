@@ -33,6 +33,11 @@ gulp.task('copy-img', function() {
       .pipe(gulp.dest('public/min'));
 });
 
+gulp.task('copy', function () {
+    return gulp.src('public/assets/**/*')
+      .pipe(gulp.dest('public/min/assets'));
+});
+
 //minify styles
 gulp.task('css', function() {
      return gulp.src(['public/comments/comments.css', 'public/kudos/kudos.css'])
@@ -43,4 +48,4 @@ gulp.task('css', function() {
         .pipe(gulp.dest('public/min'));
 });
 
-gulp.task('default', gulp.series('clean', 'css', 'js', 'copy-img'));
+gulp.task('default', gulp.series('clean', 'css', 'js', 'copy-img', 'copy'));

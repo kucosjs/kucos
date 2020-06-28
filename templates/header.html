@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Open source comments and kudos server for static websites">
+    <title>{{ title }}</title>
+    <link rel="shortcut icon" href="/min/assets/img/favicon.ico">
+    <link rel="stylesheet" href="/min/assets/css/pure/pure-min.css">
+    <link rel="stylesheet" href="/min/assets/css/pure/grids-responsive-min.css">
+    <link rel="stylesheet" href="/min/assets/css/styles.css">
+</head>
+<body>
+    <div id="layout" class="pure-g">
+        <div class="sidebar pure-u-1 pure-u-md-1-4">
+            <div class="header">
+                <a href="/"><img src="/kucos.png" /></a>
+                <h1 class="brand-title">{{ panel }}</h1>
+                <nav class="nav">
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            {% if isLoggedIn == false %}
+                                <a class="pure-button" href="/">Log in</a>
+                            {% else %}
+                                <a class="pure-button" href="/overview">Overview</a>
+                                <a class="pure-button" href="/spam">Spam</a>
+                                <a class="pure-button" href="/logout">Logout</a>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <div class="content pure-u-1 pure-u-md-3-4">
+            <div>
