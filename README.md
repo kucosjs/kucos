@@ -27,8 +27,8 @@ A simple _Markdown_ is also available, [here](https://kucos.js.org/markdown.html
 - [x] Edit own comments within an hour -(v0.10.2)
 - [x] Simple moderation of comments by the website owner [Screenshot](https://i.imgur.com/Zyt0Jxu.gif) -(v0.10.4)
 - [x] Checking whether a comment is spam. (Akismet) -(v0.10.4)
+- [x] Fast and lightweight code highlighting in comments
 - [ ] Antiflood function
-- [ ] Fast and lightweight code highlighting in comments
 - [ ] Internationalization (i18n)
 
 ## Add Kucos to your website
