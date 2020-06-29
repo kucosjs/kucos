@@ -42,6 +42,8 @@ class Comments {
             new Kudoable();
             this.bindEvents();
             this.editableGetMyComments();
+        }).then(() => {
+            this.addAutoResize();
         }) 
     };
 
@@ -234,7 +236,7 @@ class Comments {
     
         let formArea = `
         <form id="_comment_form">
-            <textarea id="comment-area${idinput}" placeholder="${text}"></textarea>
+            <textarea data-autoresize id="comment-area${idinput}" placeholder="${text}"></textarea>
             <br />
             <input type="hidden" id="username${idinput}" placeholder="Your username">
             <input type="text" id="author${idinput}" placeholder="Your name (optional)">
@@ -395,6 +397,19 @@ class Comments {
         } catch (e) {}
 
     };
+
+
+    addAutoResize = () => {
+        document.querySelectorAll('[data-autoresize]').forEach(function (element) {
+            element.style.boxSizing = 'border-box';
+            var offset = element.offsetHeight - element.clientHeight;
+            element.addEventListener('input', function (event) {
+                event.target.style.height = 'auto';
+                event.target.style.height = event.target.scrollHeight + offset + 'px';
+            });
+            element.removeAttribute('data-autoresize');
+        });
+    }
 
 }
 

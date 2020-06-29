@@ -186,16 +186,16 @@
 }
 
 #kucos-root pre code {
-  background: #f4f4f4;
+  /*background: #f4f4f4;
   border: 1px solid #ddd;
   /*border-left: 3px solid #f36d33;*/
-  /*border-left: 3px solid rgba(100, 170, 240, 0.8);*/
+  /*border-left: 3px solid rgba(100, 170, 240, 0.8);* /
   color: #666;
   page-break-inside: avoid;
   font-family: monospace;
   font-size: 15px;
   line-height: 1.6;
-  margin-bottom: 1.6em;
+  margin-bottom: 1.6em;*/
   max-width: 100%;
   overflow: auto;
   padding: 1em 1.5em;
@@ -205,11 +205,11 @@
 
 #kucos-root code {
   background: #f4f4f4;
-  border: 1px solid #ddd;
   color: #666;
   font-family: monospace;
+  /*border: 1px solid #ddd;
   font-size: 15px;
-  padding: 1px 6px 1px 6px;
+  padding: 1px 6px 1px 6px;*/
 }
 /**/
 #kucos-root .loader,
