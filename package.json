@@ -1,8 +1,7 @@
 {
   "name": "kucos",
-  "version": "0.10.4",
+  "version": "0.10.5",
   "description": "Open source comments and kudos server for static websites",
-  "private": true,
   "scripts": {
     "dev": "node index.js",
     "start": "NODE_ENV=production node index.js"
