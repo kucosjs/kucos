@@ -6,7 +6,6 @@ const swig     = require('swig');
 const session  = require('express-session');
 const cookieParser = require('cookie-parser');
 const config   = require('./config');
-const fc = require('./helpers/functions');
 const admin  = require('./routes/admin');
 const api      = require('./routes/api');
 const app      = express();

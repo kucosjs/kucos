@@ -192,20 +192,16 @@ exports.filterSpam = (data) => {
       var cc = [];
 
       data.map(d => {
-
           const check = obj => obj.comment_id == d._id;
           if ( spam.some(check) ) {
-
               d.author = 'Hidden';
               d.comment = 'Hidden';
               d.website = 'Hidden';
               d.spam = 1;
-              
               cc.push(d)
           } else {
               cc.push(d)
           }
-
       });
       
       resolve(cc)

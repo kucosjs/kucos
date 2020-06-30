@@ -26,10 +26,12 @@ class Slimdown {
             {regex: /(\*|_)(.*?)\1/g, replacement: '<em>$2</em>'},                     // emphasis
             {regex: /~~(.*?)~~/g, replacement: '<del>$1</del>'},                       // del
             {regex: /:"(.*?)":/g, replacement: '<q>$1</q>'},                           // quote
+            {regex: /`(.*?)`/g, replacement: '<code>$1</code>'},                       // inline code
             {regex: /((?:^&gt; .*?$\n)+)/gm, replacement: blockquote},                 // single and multiline blockquotes
             {regex: /\n/g, replacement: '<br>'},
             {regex: /(<br\s*\/?>){3,}/g, replacement: '<br><br>'},
             {regex: /<\/blockquote><blockquote>/g, replacement: '\n'}                  // fix extra blockquote
+            
         ];
 
         function blockquote(text) {

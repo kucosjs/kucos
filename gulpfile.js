@@ -43,7 +43,6 @@ gulp.task('css', function() {
      return gulp.src(['public/comments/comments.css', 'public/kudos/kudos.css', 'node_modules/highlight.js/styles/github.css'])
         /*.pipe(minifycss({root: 'src/css', keepSpecialComments: 0}))*/
         .pipe(replace(/background-image: url\(\/kudos\/heart_60x60\.png\);/g, 'background-image: url('+config.kucosServerUrl+'/min/heart_60x60.png);'))
-        .pipe(replace(/${config.kucosServerUrl}/g, config.kucosServerUrl))
         .pipe(cleanCss({compatibility: "ie8", level: 2}))
         .pipe(concat('kucos.min.css'))
         .pipe(gulp.dest('public/min'));
