@@ -177,3 +177,8 @@ h3 {
     text-align: center;
   }
 }
+
+.spam {
+  background-color: #bb0000 !important;
+  color: #eee;
+}

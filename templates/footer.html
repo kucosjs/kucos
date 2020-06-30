@@ -18,7 +18,7 @@ async function spam(id) {
 
         if (res.status == 'success' || res.status == 'error') {
             document.getElementById('notspam-' + id).setAttribute("id", "spam-" + id); 
-            document.getElementById('background-' + id).setAttribute("style", "background-color: red;");
+            document.getElementById('background-' + id).classList.add('spam');
             document.getElementById('spam-' + id).innerText = "Not spam";
         }
 
@@ -30,7 +30,7 @@ async function spam(id) {
 
         if (res.status == 'success' || res.status == 'error') {
             document.getElementById('spam-' + id).setAttribute("id", "notspam-" + id); 
-            document.getElementById('background-' + id).setAttribute("style", "background-color: #fff;");
+            document.getElementById('background-' + id).classList.remove('spam');
             document.getElementById('notspam-' + id).innerText = "Spam";
         }
 

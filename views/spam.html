@@ -14,7 +14,7 @@
                 <tbody>
                     {% for i in spamComment %}
                     <tr id="{{i.id}}">
-                        <td id="spam-{{i.id}}"style="background-color: red;">{{i.comment}}</td>
+                        <td id="spam-{{i.id}}" class="spam">{{i.comment}}</td>
                         <td><a onclick="javascript:removeComment('{{i.id}}', '{{i.article_id}}');">Remove</a></td>
                         <td><a id="notspam-{{i.id}}" onclick="javascript:notSpam('{{i.id}}');">Not spam</a></td>
                     </tr>
