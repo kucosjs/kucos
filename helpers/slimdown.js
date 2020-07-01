@@ -49,8 +49,9 @@ class Slimdown {
 
     }
 
-    highlight(data) {
-        var match = /```(.*)[a-z]*\n\s*([^]+?.*?[^]+?[^]+?)\n```/g.exec(data);
+    highlight(text) {
+        var regex = /```(.*)[a-z]*\n\s*([^]+?.*?[^]+?[^]+?)\n```/g;
+        var match = regex.exec(text);
         var language = match[1];
         var content = match[2];
 
@@ -60,7 +61,8 @@ class Slimdown {
             highlightedCode = hljs.highlightAuto(content).value
         }
 
-        return `<pre><code class="hljs">${highlightedCode}</code></pre>`;
+        text = text.replace(regex, `<pre><code class="hljs">${highlightedCode}</code></pre>`);
+        return text;
     }
 
     // Add a rule.
