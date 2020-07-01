@@ -296,3 +296,39 @@
 #kucos-root .sticky {
   border: 4px solid #ffff66 !important;
 }
+
+
+#kucos-root .spoiler {
+  overflow: hidden;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+#kucos-root .checker {
+  display: none;
+}
+#kucos-root .toggle {
+  display: block;
+  overflow: hidden;
+  width: 100px;
+  height: 18px;
+  background: #eee;
+  padding: 2px;
+  color: #666;
+  border-radius: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+  text-align: center;
+}
+#kucos-root .checker:not(:checked) + .toggle + .spoiler {
+  height: 0;
+}
+#kucos-root .checker:checked + .toggle {
+  display: none;
+}
+#kucos-root code.text {
+  white-space: pre;
+  font-family: monospace;
+  font-size: 14px;
+  white-space: normal;
+  padding: 1px 5px;
+}

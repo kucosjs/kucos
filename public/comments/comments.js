@@ -276,7 +276,7 @@ class Comments {
             var selectedText = getSelectedText.replace(/^/gm, '> ') + "\n";
         }
 
-		if (event.target.nodeName === 'A' || event.target.nodeName === 'BUTTON') {
+		if (event.target.nodeName === 'A' || event.target.nodeName === 'BUTTON' || event.target.nodeName === 'LABEL') {
 			let parts = event.target.id.split("-");
 			let type = parts[0];
 			let id = parts[parts.length-1];
@@ -323,7 +323,10 @@ class Comments {
                 //prevChild.remove();
 			} else if(type == 'upvote' || type == 'downvote') {
                 this.vote(id, type);
-			}
+            } else if(type == 'checker') {
+                document.getElementById("checker-" + id).checked = true;
+            }
+            
 		}
 
     };

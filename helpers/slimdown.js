@@ -27,15 +27,22 @@ class Slimdown {
             {regex: /~~(.*?)~~/g, replacement: '<del>$1</del>'},                       // del
             {regex: /:"(.*?)":/g, replacement: '<q>$1</q>'},                           // quote
             {regex: /`(.*?)`/g, replacement: '<code>$1</code>'},                       // inline code
-            {regex: /((?:^&gt; .*?$\n)+)/gm, replacement: blockquote},                 // single and multiline blockquotes
+            {regex: /((?:^&gt;.*?$\n)+)/gm, replacement: blockquote},                 // single and multiline blockquotes
+            {regex: /((?:^!(.*).*?$\n)+)/gm, replacement: spoiler},                   // spoiler
             {regex: /\n/g, replacement: '<br>'},
             {regex: /(<br\s*\/?>){3,}/g, replacement: '<br><br>'},
             {regex: /<\/blockquote><blockquote>/g, replacement: '\n'}                  // fix extra blockquote
-            
+
         ];
 
+        function spoiler(text) {
+            var id = Math.random().toString(36).substring(7);
+            text = text.replace(/(^!)/gm, '');
+            return `<input type="checkbox" id="checker-${id}" class="checker"><label for="checker-${id}" id="checker-${id}" class="toggle">show spoiler</label><div class="spoiler"><code class="text">${text}</code></div>`;
+        }
+
         function blockquote(text) {
-            text = text.replace(/(^&gt; )/gm, '');
+            text = text.replace(/(^&gt;)/gm, '');
             //text = text.replace(/(^> )/gm, '');
             return `<blockquote>${text.trim()}</blockquote>`;
         }
