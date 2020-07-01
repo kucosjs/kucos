@@ -40,15 +40,14 @@ module.exports = {
     },
 
     removeComment: function(req, res) {
-        Stats.findOne({article_id: req.query.url}, function(err, article) {
-            article.totalComments = article.totalComments - 1;
-            if (req.query.spam == 1) {
-                article.totalSpam = article.totalSpam - 1;
-            }
-            article.save(function(err) {
+        fc.allStats(req, res, req.query.url, 'remove', 'spam');
+        fc.allStats(req, res, req.query.url, 'remove', 'comment');
+
+        if (req.query.spam == 1) {
+            Spam.remove({ comment_id: req.params.id }, function(err) {
                 if (err) console.log(err)
             });
-        });
+        }
         Comment.remove({ _id: req.params.id }, function(err) {
             if (err) console.log(err)
             else res.json({message: 'Comment deleted'});
@@ -61,19 +60,21 @@ module.exports = {
             if (err) console.log(err)
         });
         if (config.enableAkismet) {
-            Comment.find({_id: req.params.id}).exec(async function(err, data) {
+            Comment.findById(req.params.id).exec(async function(err, data) {
                 await fc.checkCommentSpam(req, res, data, 'submitHam', req.params.id);
+                fc.allStats(req, res, data.article_id, 'remove', 'spam');
             });
         }
         return;
     },
 
     reportSpam: function(req, res) {
-        Comment.findOne({_id: req.params.id}).exec(async function(err, data) {
+        Comment.findById(req.params.id).exec(async function(err, data) {
             Spam.create({ comment_id: data._id });
             if (config.enableAkismet) {
                 await fc.checkCommentSpam(req, res, data, 'submitSpam', req.params.id);
             }
+            fc.allStats(req, res, data.article_id, 'add', 'spam');
         });
         return;
     },

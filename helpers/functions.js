@@ -85,6 +85,30 @@ exports.validateUser = (req, res) => {
   return userid;
 }
 
+exports.allStats = (req, res, url, action, c) => {
+  Stats.findOne({article_id: url}, function(err, article) {
+
+      if (c == 'spam') {
+        if (action == 'add') {
+            article.totalSpam = article.totalSpam + 1;
+        } else if (action == 'remove') {
+            article.totalSpam = article.totalSpam - 1;
+        }
+      } else if (c == 'comment') {
+        if (action == 'add') {
+            article.totalComments = article.totalComments + 1;
+        } else if (action == 'remove') {
+            article.totalComments = article.totalComments - 1;
+        }
+      }
+
+      article.save(function(err) {
+          if (err) console.log(err)
+      });
+  });
+}
+
+
 exports.validateAdmin = (req, res, next) => {
   if (req.session.admin !== true) {
     return res.redirect(301, '/');
