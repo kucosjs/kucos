@@ -5,7 +5,7 @@
 {% if isLoggedIn == true %}
 <script>
 function removeComment(id, url) {
-    request(null, 'DELETE', '/remove/' + id + '/?url=' + url + '&' + spam);
+    request(null, 'DELETE', '/remove/' + id + '/?url=' + url);
     document.getElementById(id).remove();
 }
 

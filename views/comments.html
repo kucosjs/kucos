@@ -17,7 +17,7 @@
                     <tr id="{{i.id}}">
                         {% if spamComment|contains(i.id) %}
                             <td id="background-{{i.id}}" class="spam">{{i.comment}}</td>
-                            <td><a onclick="javascript:removeComment('{{i.id}}', '{{i.article_id}}');">Remove</a></td>
+                            <td><a onclick="javascript:removeComment('{{i.id}}', '{{i.article_id}}&spam=1');">Remove</a></td>
                             <td><a id="spam-{{i.id}}" onclick="javascript:spam('{{i.id}}');">Not spam</a></td>
                         {% else %}
                             {% if i.sticky == 0 %} 
