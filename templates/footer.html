@@ -5,7 +5,9 @@
 {% if isLoggedIn == true %}
 <script>
 function removeComment(id, url) {
-    request(null, 'DELETE', '/remove/' + id + '/?url=' + url);
+    var s = document.getElementById('isspam-' + id) !== null ? '&spam=1' : '';
+    console.log(url, s)
+    request(null, 'DELETE', '/remove/' + id + '/?url=' + url + s);
     document.getElementById(id).remove();
 }
 
@@ -20,6 +22,7 @@ async function spam(id) {
             document.getElementById('notspam-' + id).setAttribute("id", "spam-" + id); 
             document.getElementById('background-' + id).classList.add('spam');
             document.getElementById('spam-' + id).innerText = "Not spam";
+            document.getElementById('nospam-' + id).setAttribute("id", "isspam-" + id); 
         }
 
     } else if ( document.getElementById('spam-' + id) ) {
@@ -32,6 +35,7 @@ async function spam(id) {
             document.getElementById('spam-' + id).setAttribute("id", "notspam-" + id); 
             document.getElementById('background-' + id).classList.remove('spam');
             document.getElementById('notspam-' + id).innerText = "Spam";
+            document.getElementById('isspam-' + id).setAttribute("id", "nospam-" + id); 
         }
 
     }

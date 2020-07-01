@@ -40,10 +40,11 @@ module.exports = {
     },
 
     removeComment: function(req, res) {
-        fc.allStats(req, res, req.query.url, 'remove', 'spam');
+        
         fc.allStats(req, res, req.query.url, 'remove', 'comment');
 
         if (req.query.spam == 1) {
+            fc.allStats(req, res, req.query.url, 'remove', 'spam');
             Spam.remove({ comment_id: req.params.id }, function(err) {
                 if (err) console.log(err)
             });
