@@ -65,7 +65,7 @@ exports.commentResponse = (data, action=null) => {
   var comments = [];
 
   data.map(d => {
-    comments = [].concat(comments, {id: d._id, author: d.author, comment: sd.render(d.comment), email: d.email, website: d.website, parent_id: d.parent_id, createdOn: d.createdOn, createdOnTime: moment(d.createdOn).format('dddd, MMMM Do YYYY, HH:mm:ss'), created: moment(d.createdOn).fromNow(), updatedOn: moment(d.updatedOn).format('dddd, MMMM Do YYYY, HH:mm:ss'), likes: d.likes, dislikes: d.dislikes, score: d.likes - d.dislikes, spam: d.spam });
+    comments = [].concat(comments, {id: d._id, author: d.author, comment: sd.render(d.comment), email: d.email, website: d.website, parent_id: d.parent_id, createdOn: d.createdOn, createdOnTime: moment(d.createdOn).format('dddd, MMMM Do YYYY, HH:mm:ss'), created: moment(d.createdOn).fromNow(), updatedOn: moment(d.updatedOn).format('dddd, MMMM Do YYYY, HH:mm:ss'), likes: d.likes, dislikes: d.dislikes, score: d.likes - d.dislikes, spam: d.spam, sticky: d.sticky });
   });
   
   if (action == 'created')

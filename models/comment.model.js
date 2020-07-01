@@ -55,6 +55,10 @@ const commentSchema = new Schema({
   spam: {
     type: Number,
     default: 0
+  },
+  sticky: {
+    type: Number,
+    default: 0
   }
 });
 

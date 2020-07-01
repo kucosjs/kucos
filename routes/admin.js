@@ -15,5 +15,6 @@ router.get('/spam', fc.validateAdmin, adminCtrl.spam);
 router.delete('/remove/:id', fc.validateAdmin, adminCtrl.removeComment);
 router.patch('/notspam/:id', fc.validateAdmin, adminCtrl.notspam);
 router.patch('/reportspam/:id', fc.validateAdmin, adminCtrl.reportSpam);
+router.patch('/sticky/:id', fc.validateAdmin, adminCtrl.stickyComment);
 
 module.exports = router;

@@ -9,6 +9,7 @@
                         <th>Comment</th>
                         <th>Remove</th>
                         <th>Spam</th>
+                        <th>Sticky</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -19,10 +20,25 @@
                             <td><a onclick="javascript:removeComment('{{i.id}}', '{{i.article_id}}');">Remove</a></td>
                             <td><a id="spam-{{i.id}}" onclick="javascript:spam('{{i.id}}');">Not spam</a></td>
                         {% else %}
-                            <td id="background-{{i.id}}">{{i.comment}}</td>
+                            {% if i.sticky == 0 %} 
+                                <td id="background-{{i.id}}">{{i.comment}}</td>
+                            {% else %}
+                                <td id="background-{{i.id}}" class="sticky">{{i.comment}}</td>
+                            {% endif %}
                             <td><a onclick="javascript:removeComment('{{i.id}}', '{{i.article_id}}');">Remove</a></td>
                             <td><a id="notspam-{{i.id}}" onclick="javascript:spam('{{i.id}}');">Spam</a></td>
                         {% endif %}
+
+                        {% if i.parent_id == null %}
+                            {% if i.sticky == 0 %} 
+                                <td><a id="sticky-{{i.id}}" onclick="javascript:stickyComment('{{i.id}}');">Sticky</a></td> 
+                            {% else %}
+                                <td><a id="sticky-{{i.id}}" onclick="javascript:stickyComment('{{i.id}}');">Unsticky</a></td> 
+                            {% endif %}
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+
                     </tr>
                     {% endfor %}
                 </tbody>

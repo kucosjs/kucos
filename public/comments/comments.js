@@ -27,7 +27,9 @@ class Comments {
         await this.getComments().then((data) => {
             var count = data.count;
             var thtml = '';
-            var thtml = this.displayComments(data.comments);
+            var thtml = this.displayComments(data.comments, data.count);
+            var comments = thtml[0] == null ? '' : thtml[0];
+            var sticky = thtml[1] == null ? '' : thtml[1];
             if (count == undefined) var count = 0;
         
             document.getElementById("comments").innerHTML = 
@@ -36,7 +38,10 @@ class Comments {
                                                     Comments: <span id="_amount">${count}</span>
                                                 </span>
                                                 ${this.formArea()}
-                                                <div id="commentsArea">${thtml}</div>
+                                                <div id="commentsArea">
+                                                    <div id="sticky">${sticky}<div>
+                                                    ${comments}
+                                                </div>
                                             </div>`;
         }).then(() => {
             new Kudoable();
@@ -138,33 +143,46 @@ class Comments {
         return data;
     };
 
-    displayComments = (allComments) => {
-    
-        if (allComments.length == 0) return 'No comments, yet!'
+    displayComments = (allComments, count) => {
+
+        if (count == 0) return ['No comments, yet!', null]
         // else 
 
-        let comments = []
+        let comments = [];
+        let sticky = [];
+        
         for (let comment of Object.values(allComments)) {
     
-            let html = this.commentHtml(comment);
+            if (comment.sticky == 1) {
+                var stickyHtml = this.commentHtml(comment, 'sticky');
 
-            comments.push(`<li class="neqcc-${comment.id}">${html.toString()}</li>`)
-    
-            if (comment.children && Object.keys(comment.children).length > 0) {
-                let replies = `<ul class="neqcc-${comment.id} neqcc" id="neqcc-${comment.id}">${this.displayComments(comment.children)}</ul>`
-                comments = comments.concat(replies)
+                sticky.push(`<li class="neqcc-${comment.id}">${stickyHtml.toString()}</li>`)
+                if (comment.children && Object.keys(comment.children).length > 0) {
+                    let replies = `<ul class="neqcc-${comment.id} neqcc" id="neqcc-${comment.id}">${this.displayComments(comment.children)}</ul>`
+                    sticky = sticky.concat(replies)
+                }
+            } else {
+                var html = this.commentHtml(comment);
+
+                comments.push(`<li class="neqcc-${comment.id}">${html.toString()}</li>`)
+                if (comment.children && Object.keys(comment.children).length > 0) {
+                    let replies = `<ul class="neqcc-${comment.id} neqcc" id="neqcc-${comment.id}">${this.displayComments(comment.children)}</ul>`
+                    comments = comments.concat(replies)
+                }
             }
+
         }
-        return comments.join("");
+        return [comments.join(""), sticky.join("")];
     };
     
-    commentHtml = (comment) => {
+    commentHtml = (comment, sticky=null) => {
 
         let score = comment.score ? comment.score : 0;
         let likes = comment.likes ? comment.likes : 0;
         let dislikes = comment.dislikes ? comment.dislikes : 0;
         let edited = comment.createdOnTime != comment.updatedOn ? `<span title="${comment.updatedOn}"><em>edited</em></span>` : ''
-        
+        var sticky = sticky != null ? ' sticky' : '';
+
         if (comment.spam == 1) {
             var spamInfo = `<span><em>This comment must be reviewed before publishing it.</em></span>`;
             var spam = ' spam';
@@ -192,8 +210,9 @@ class Comments {
                 
             <div class="commentText">
         
-                <div id="comment-${comment.id}" class="_comment">
+                <div id="comment-${comment.id}" class="_comment${sticky}">
                     <div class="_header">
+                        <span style="text-transform: capitalize;font-weight: bold;">${sticky}</span>
                         ` + web + ` 
                         <span class="spacer">•</span>
                         <a href="#comment-${comment.id}">

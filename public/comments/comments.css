@@ -293,3 +293,6 @@
   display: none;
 }
 
+#kucos-root .sticky {
+  border: 4px solid #ffff66 !important;
+}

@@ -76,8 +76,22 @@ module.exports = {
             }
         });
         return;
-    }
+    },
 
+    stickyComment: function(req, res) {
+        Comment.findById(req.params.id, function(err, article) {
+            if (article.sticky == null || article.sticky == 0) {
+                article.sticky = 1;
+                res.json({message: 'sticked'});
+            } else {
+                article.sticky = 0;
+                res.json({message: 'unsticked'});
+            }
+            article.save(function(err) {
+                if (err) console.log(err)
+            });
+        });
+    }
 
 }
 

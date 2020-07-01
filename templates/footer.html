@@ -36,6 +36,17 @@ async function spam(id) {
 
     }
 }
+
+async function stickyComment(id) {
+    var res = await request(null, 'PATCH', '/sticky/' + id);
+    if (res.message == 'sticked') {
+        document.getElementById('background-' + id).classList.add('sticky');
+        document.getElementById('sticky-' + id).innerText = "Unsticky";
+    } else if (res.message == 'unsticked') {
+        document.getElementById('background-' + id).classList.remove('sticky');
+        document.getElementById('sticky-' + id).innerText = "Sticky";
+    }
+}
 </script>
 
 
