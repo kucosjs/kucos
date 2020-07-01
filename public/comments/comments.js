@@ -28,10 +28,8 @@ class Comments {
             var count = data.count;
             var thtml = '';
             var thtml = this.displayComments(data.comments, data.count);
-            var comments = thtml[0] == null ? '' : thtml[0];
-            var sticky = thtml[1] == null ? '' : thtml[1];
             if (count == undefined) var count = 0;
-        
+
             document.getElementById("comments").innerHTML = 
                                             `<div id="kucos-root">
                                                 <span class="_comments_count">
@@ -39,8 +37,7 @@ class Comments {
                                                 </span>
                                                 ${this.formArea()}
                                                 <div id="commentsArea">
-                                                    <div id="sticky">${sticky}<div>
-                                                    ${comments}
+                                                    ${thtml}
                                                 </div>
                                             </div>`;
         }).then(() => {
@@ -172,7 +169,9 @@ class Comments {
             }
 
         }
-        return [comments.join(""), sticky.join("")];
+
+        comments = [].concat(sticky, comments)
+        return comments.join("");
     };
     
     commentHtml = (comment, sticky=null) => {
