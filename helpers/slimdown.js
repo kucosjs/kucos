@@ -1,17 +1,15 @@
 'use strict';
 
 const hljs = require('highlight.js');
-const fc = require('./functions');
 
 /**
  * Javascript version of https://gist.github.com/jbroadway/2836900
  *
- * Slimdown - A very basic regex-based Markdown parser. Supports the
- * following elements (and can be extended via Slimdown::add_rule()):
+ * Slimdown - A very basic regex-based Markdown parser. 
  *
  * Author: Johnny Broadway <johnny@johnnybroadway.com>
- * Modified by Sebastian Korotkiewicz <Kuscos>
- * Website: https://gist.github.com/jbroadway/2836900
+ * 
+ * Modified by: Sebastian Korotkiewicz <Kuscos>
  * 
  * License: MIT
  */
@@ -49,43 +47,42 @@ class Slimdown {
 
     }
 
-    highlight(text) {
-        var regex = /```(.*)[a-z]*\n\s*([^]+?.*?[^]+?[^]+?)\n```/g;
-        var match = regex.exec(text);
-        var language = match[1];
-        var content = match[2];
-
+    highlight(language, content) {
         if (language) {
             var highlightedCode = hljs.highlight(language, content).value
         } else {
             highlightedCode = hljs.highlightAuto(content).value
         }
-
-        text = text.replace(regex, `<pre><code class="hljs">${highlightedCode}</code></pre>`);
-        return text;
-    }
-
-    // Add a rule.
-    addRule(regex, replacement) {
-        regex.global = true;
-        regex.multiline = true;
-        this.rules.push({
-            regex,
-            replacement,
-        });
+        return `<pre><code class="hljs">${highlightedCode}</code></pre>`;
     }
 
     // Render some Markdown into HTML.
     render(text) {
-        //text = `\n${text}\n`;
-        if ( /```\s*([^]+?.*?[^]+?[^]+?)```/g.test(text) ) {
-            text = this.highlight(text);
-        } else {
-            text = fc.cleanHtml(text);
-            this.rules.forEach( (rule) => {
-                text = text.replace(rule.regex, rule.replacement);
-            });
+
+        text = text.replace('KUCOSMULTILINECODEID', 'KUCOSMULTILINECODE');
+
+        var regex = /```(.*)([^]+?.*?[^]+?[^]+?)\n```/g;
+        var arr = [];
+        const matches = text.matchAll(regex);
+
+        // Match all multiline codes, push into array and replace codes with temporary string
+        for (const match of matches) {
+            var code = this.highlight(match[1].trim(), match[2].trim() )
+            arr.push(code);
+            text = text.replace(match[0], 'KUCOSMULTILINECODEID');
         }
+
+        // Match remaining text and replace with rules
+        for (let i = 0; i < this.rules.length; i++) {
+            const rule = this.rules[i];
+            text = text.replace(rule.regex, rule.replacement);
+        }
+        
+        // Match temporary string and replace with multiline codes from array
+        for (let i = 0; i < arr.length; i++) {
+            text = text.replace('KUCOSMULTILINECODEID', arr[i]);
+        }
+
         return text.trim();
     }
 }
