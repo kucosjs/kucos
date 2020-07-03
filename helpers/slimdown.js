@@ -55,6 +55,17 @@ class Slimdown {
         }
         return `<pre><code class="hljs">${highlightedCode}</code></pre>`;
     }
+    
+    cleanHtml(text) {
+        var map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+          };
+          return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
 
     // Render some Markdown into HTML.
     render(text) {
@@ -71,6 +82,8 @@ class Slimdown {
             arr.push(code);
             text = text.replace(match[0], 'KUCOSMULTILINECODEID');
         }
+
+        text = this.cleanHtml(text);
 
         // Match remaining text and replace with rules
         for (let i = 0; i < this.rules.length; i++) {
