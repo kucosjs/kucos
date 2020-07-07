@@ -332,3 +332,42 @@
   white-space: normal;
   padding: 1px 5px;
 }
+
+
+
+#kucos-root #markdown-editor #toolbar {
+  overflow: hidden;
+  margin-top: 20px;
+  margin-bottom: -20px;
+  width: 100%;
+}
+#kucos-root #markdown-editor #toolbar button {
+  border: 1px solid transparent;
+  background-color: #f6f6f6;
+  border-radius: 5px;
+  color: #555555;
+  font-family: sans-serif;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0.2rem;
+  min-width: 30px;
+}
+#kucos-root #markdown-editor #toolbar button:hover,
+#kucos-root #markdown-editor #toolbar button.active {
+  border: 1px solid #c5c5c5;
+  color: rgb(100, 100, 100);
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  outline: 0px;
+}
+#kucos-root #markdown-editor #toolbar button:focus {
+  outline: none;
+}
+#kucos-root #markdown-editor #input-output #input-area:focus,
+#kucos-root #markdown-editor #input-output #input-area:active {
+  outline: 0px;
+}
+
+#input-area {
+    width: 100%
+}

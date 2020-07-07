@@ -7,6 +7,7 @@ class Comments {
     bindEvents = () => {
       this.on(document.getElementById("submitComment"), 'click', this.postComment);
       this.on(document.getElementById("commentsArea"), 'click', this.commentsArea);
+      this.on(document.getElementById("toolbar"), 'click', this.toolbar);
     };
 
     on = (element, event, func) => {
@@ -253,17 +254,30 @@ class Comments {
         }
     
         let formArea = `
-        <form id="_comment_form">
-            <textarea data-autoresize id="comment-area${idinput}" placeholder="${text}"></textarea>
-            <br />
-            <input type="hidden" id="username${idinput}" placeholder="Your username">
-            <input type="text" id="author${idinput}" placeholder="Your name (optional)">
-            <input type="email" id="email${idinput}" placeholder="Your email (optional)">
-            <input type="website" id="website${idinput}" placeholder="Your website (optional)">
-            ${input}
-        </form>
-        <div id="_infos${idinput}"></div>`;
-    
+        <div id="markdown-editor">
+            <div id="toolbar">
+                <button id="bold${idinput}-t">B</button>
+                <button id="italic${idinput}-t">I</button>
+                <button id="quote${idinput}-t">quote</button>
+                <button id="link${idinput}-t">link</button>
+                <button id="code${idinput}-t">code</button>
+                <button id="spoiler${idinput}-t">spoiler</button>
+                <button id="delete${idinput}-t">del</button>
+            </div>
+            <div id="input-output">
+                <form id="_comment_form">
+                    <textarea data-autoresize id="comment-area${idinput}" placeholder="${text}"></textarea>
+                    <br />
+                    <input type="hidden" id="username${idinput}" placeholder="Your username">
+                    <input type="text" id="author${idinput}" placeholder="Your name (optional)">
+                    <input type="email" id="email${idinput}" placeholder="Your email (optional)">
+                    <input type="website" id="website${idinput}" placeholder="Your website (optional)">
+                    ${input}
+                </form>
+                <div id="_infos${idinput}"></div>
+            </div>
+        </div>`;
+
         return formArea;
     };
 
@@ -278,9 +292,9 @@ class Comments {
 
 		if (event.target.nodeName === 'A' || event.target.nodeName === 'BUTTON' || event.target.nodeName === 'LABEL') {
 			let parts = event.target.id.split("-");
-			let type = parts[0];
-			let id = parts[parts.length-1];
-            let eid = event.target.id.split("reply-")[1]; 
+            let type = parts[0];
+            let id = parts[1];
+            let toolbar = parts[2];
             let prevChild = document.getElementById(`childlist-${id}`);
 
 			if (type == 'reply' || type == 'edit') {
@@ -325,9 +339,72 @@ class Comments {
                 this.vote(id, type);
             } else if(type == 'checker') {
                 document.getElementById("checker-" + id).checked = true;
+            } else if( toolbar == "t" && id ) {
+                this.toolbar(null, type, "comment-area-"+id)
             }
             
 		}
+
+    };
+
+    toolbar = (event=null, button, area) => {
+
+        if (event) {
+            let parts = event.target.id.split("-");
+            button = parts[0];
+            var textarea = document.getElementById( 'comment-area' );
+        } else {
+            var textarea = document.getElementById( area );
+        }
+
+        if (button == "bold") {
+            insertText( textarea, '****', 'bold', 2, 6 )
+
+        } else if (button == "italic") {
+            insertText( textarea, '__', 'italic',  1, 7 )
+
+        } else if (button == "quote") {
+            insertText( textarea, '\n>', ' quote\n',  3, 8 )
+
+        } else if (button == "link") {
+            insertText( textarea, '[](http://...)', 'url text', 1, 9 )
+
+        } else if (button == "code") {
+            insertText( textarea, '``', 'code',  1, 5 )
+
+        } else if (button == "spoiler") {
+            insertText( textarea, '\n!', ' spoiler\n',  3, 10 )
+
+        } else if (button == "delete") {
+            insertText( textarea, '~~~~', 'delete text',  2, 13 )
+
+        }
+
+        function insertText( textarea, syntax, placeholder = 'demo', selectionStart = 0, selectionEnd = 0 ) {
+            // Current Selection
+            const currentSelectionStart = textarea.selectionStart;
+            const currentSelectionEnd = textarea.selectionEnd;
+            const currentText = textarea.value;
+        
+            if( currentSelectionStart === currentSelectionEnd ) {
+                const textWithSyntax = textarea.value = currentText.substring( 0, currentSelectionStart ) + syntax + currentText.substring( currentSelectionEnd );
+                textarea.value = textWithSyntax.substring( 0, currentSelectionStart + selectionStart ) + placeholder + textWithSyntax.substring( currentSelectionStart + selectionStart )
+        
+                textarea.focus();
+                textarea.selectionStart = currentSelectionStart + selectionStart;
+                textarea.selectionEnd = currentSelectionEnd + selectionEnd;
+            } else {
+                const selectedText = currentText.substring( currentSelectionStart, currentSelectionEnd );
+                const withoutSelection = currentText.substring( 0, currentSelectionStart ) + currentText.substring( currentSelectionEnd );
+                const textWithSyntax = withoutSelection.substring( 0, currentSelectionStart ) + syntax + withoutSelection.substring( currentSelectionStart );
+        
+                // Surround selected text
+                textarea.value = textWithSyntax.substring( 0, currentSelectionStart + selectionStart ) + selectedText + textWithSyntax.substring( currentSelectionStart + selectionStart );
+        
+                textarea.focus();
+                textarea.selectionEnd = currentSelectionEnd + selectionStart + selectedText.length;
+            }
+        }
 
     };
 

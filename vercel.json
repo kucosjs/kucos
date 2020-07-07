@@ -1,13 +1,6 @@
 {
   "name": "kucos",
   "version": 2,
-  "builds": [ 
-    { "src": "/public/min/**", "use": "@now/static" },
-    { "src": "/index.js", "use": "@now/node-server" }
-  ],
-  "routes": [
-    { "src": "/min/(.*)", "dest": "/public/min/$1" },
-    { "src": "/(.*)", "dest": "/index.js" }
-  ]
+  "builds": [{ "src": "index.js", "use": "@vercel/node" }],
+  "routes": [{ "src": "/(.*)", "dest": "/index.js" }]
 }
-
