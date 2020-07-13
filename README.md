@@ -1,5 +1,28 @@
-<h1 style="text-align:center;">Introducing Kucos <a href="https://kucos.js.org"><img style="vertical-align:middle;" src="https://kucos.js.org/assets/img/kucos.gif" /></a></h1>
-<img src="https://i.imgur.com/oxUGn7M.gif" style="width: 600px;display: block; margin: 0 auto;" alt="Screenshot of Kucos">
+<p align="center">
+    <a href="https://github.com/kucosjs/kucos">
+        <img src="https://kucos.js.org/assets/img/kucos.gif" alt="Kucos Logo" height="60"/>
+    </a>
+</p>
+<h1 align="center">Kucos.js</h1>
+<p align="center">Simple and privacy focused serverless comments with kudos.</p>
+
+<p align="center">
+    <a href="https://github.com/kucosjs/kucos">
+        <img src="https://img.shields.io/badge/total%20size-17%20kb-brightgreen" />
+        <img src="https://img.shields.io/badge/license-MIT-brightgreen" />
+        <img src="https://img.shields.io/badge/version-v0.10.5-blue" />
+    </a>
+</p>
+
+<br />
+
+<p align="center">
+    <a href="https://github.com/kucosjs/kucos">
+        <img src="https://i.imgur.com/oxUGn7M.gif" style="width: 600px;display: block; margin: 0 auto;" />
+        <img src="https://i.imgur.com/cOmvr3S.png" style="width: 600px;display: block; margin: 0 auto;" />
+    </a>
+</p>
+<br />
 
 ### Please notice, this is a version that is being heavily developed, so I do not recommend using it in production yet. But to try it out locally is highly recommended! 
 
