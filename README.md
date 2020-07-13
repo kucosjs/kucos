@@ -24,8 +24,6 @@
 </p>
 <br />
 
-### Please notice, this is a version that is being heavily developed, so I do not recommend using it in production yet. But to try it out locally is highly recommended! 
-
 Simple and privacy focused comments with kudos.
 
 You don't need a server to host your comment system, you can easily host Kucos on <s>ZEIT NOW</s> (now [Vercel](https://vercel.com/)) and database on Mongo Atlas where 500mb is for free (for comments it is a lot space :)).
