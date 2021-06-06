@@ -28,7 +28,6 @@
   "dependencies": {
     "akismet-api": "^5.0.0",
     "async": "^3.1.0",
-    "axios": "^0.19.2",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "debug": "latest",
